@@ -5,8 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class SurnameInitialPipe implements PipeTransform {
 
-  transform(apellido: string): unknown {
-    return apellido.charAt(0).toUpperCase();
+  transform(apellido?: string): string {
+    if (apellido)
+      return apellido.charAt(0).toUpperCase();
+    return ""
   }
 
 }

@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" >
   <ion-toolbar>
     <ion-title>
       Gestor de usuarios
@@ -16,7 +16,7 @@
   <div id="container">
     <ion-button (click)="welcome()">Ir a welcome</ion-button>
     <section class="user-info">
-      <app-user-info *ngFor="let user of users" [user]="user"></app-user-info>
+      <app-user-info *ngFor="let user of users$ | async" [user]="user"></app-user-info>
     </section>
     <strong>Ready to create an app?</strong>
     <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
