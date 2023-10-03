@@ -1,7 +1,7 @@
 <ion-card class="card" color="light" (click)="welcome()" button="true">
   <ion-card-header>
 
-    <ion-button class="fav-button" fill="clear" aria-label="Favorite" (click)="onFavClick($event)">
+    <ion-button button class="fav-button" fill="clear" aria-label="Favorite" (click)="onFavClick($event)">
       <ion-icon *ngIf="!user?.fav; else favIcon" slot="icon-only" color="light" name="heart-outline"
         aria-hidden="true"></ion-icon>
       <ng-template #favIcon>

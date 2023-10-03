@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController, ToastOptions } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { User } from 'src/app/components/home/models/user';
-import { UserInfoFavClicked } from './models/user-info-fav-clicked';
+import { User } from 'src/app/models/user.interface';
+import { UsersService } from 'src/app/services/users.service';
+import { UserInfoFavClicked } from './user-info/user-info-fav-clicked.interface';
 
 @Component({
   selector: 'app-home',
@@ -11,30 +12,19 @@ import { UserInfoFavClicked } from './models/user-info-fav-clicked';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
-  users$: Observable<User[]> = this._users.asObservable();
+  public loading: boolean = false;
 
-  constructor(private router: Router, private toast: ToastController) { }
+  constructor(
+    private router: Router,
+    private toast: ToastController,
+    public users: UsersService
+  ) { }
 
   ngOnInit(): void {
-    let index = 0;
-    let usersData: User[] = [
-      { id: 0, name: "Juan A.", surname: "García Gómez", age: 46, fav: false },
-      { id: 1, name: "María del Mar", surname: "Valencia Valencia", age: 46, fav: false },
-      { id: 2, name: "Alejandro", surname: "García Gómez", age: 45, fav: false },
-      { id: 3, name: "Juan", surname: "García Valencia", age: 4, fav: false },
-      { id: 4, name: "Lydia", surname: "García Robles", age: 11, fav: false }
-    ];
-
-    // Cada segundo mete un usuario nuevo en un array
-    setInterval(() => {
-      if (index < usersData.length) {
-        let users = this._users.value;
-        users.push(usersData[index]);
-        this._users.next(users);
-        index++;
-      }
-    }, 100);
+    this.loading = true;
+    this.users.getAll().subscribe(() => {
+      this.loading = false;
+    });
   }
 
   welcome() {
@@ -47,28 +37,25 @@ export class HomePage implements OnInit {
    * @param event objeto del tipo UserInfoFavClicked que tiene una propiedad fav que indica si hay que añadir o eliminar de la lista de favoritos
    */
   onFavClicked(user: User, event: UserInfoFavClicked) {
-    //creamos una copia del array actual de usuarios
-    const users = [...this._users.value];
-    //buscamos el índice del usuario para modificar su propiedad fav
-    let index = users.findIndex((_user) => _user.id == user.id);
-    if (index != -1) {
-      console.log(index);
-      users[index].fav = event.fav ?? false; //en el caso de que fav sea undefined devolvemos falso.
-    }
+    let _user: User = { ...user };
+    _user.fav = event.fav ?? false;
+    this.users.updateUser(_user).subscribe({
+      next: user => {
+        //Notificamos con un Toast que se ha pulsado
+        const options: ToastOptions = {
+          message: `Usuario ${event.fav ? 'añadido' : 'eliminado'} ${event.fav ? 'a' : 'de'} favoritos`,
+          duration: 1000,
+          position: 'bottom',
+          color: 'warning',
+          cssClass: 'fav-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
+        };
 
-    //notificamos un nuevo array de usuarios para que se renderice en la plantilla
-    this._users.next([...users]);
-
-    //Notificamos con un Toast que se ha pulsado
-    const options: ToastOptions = {
-      message: `Usuario ${event.fav ? 'añadido' : 'eliminado'} ${event.fav ? 'a' : 'de'} favoritos`,
-      duration: 1000,
-      position: 'bottom',
-      color: 'warning',
-      cssClass: 'fav-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
-    };
-
-    //creamos el toast y lo presentamos (es una promesa por eso el then)
-    this.toast.create(options).then(toast => toast.present());
+        //creamos el toast y lo presentamos (es una promesa por eso el then)
+        this.toast.create(options).then(toast => toast.present());
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
   }
 }

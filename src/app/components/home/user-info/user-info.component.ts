@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '../models/user';
-import { UserInfoFavClicked } from '../models/user-info-fav-clicked';
+import { User } from '../../../models/user.interface';
+import { UserInfoFavClicked } from './user-info-fav-clicked.interface';
 
 @Component({
   selector: 'app-user-info',
@@ -10,7 +10,10 @@ import { UserInfoFavClicked } from '../models/user-info-fav-clicked';
 })
 export class UserInfoComponent implements OnInit, AfterViewInit {
   @Input() user: User | null = null;
+  
   @Output() onFavClicked: EventEmitter<UserInfoFavClicked> = new EventEmitter<UserInfoFavClicked>();
+  // Emitir @Output() onCardClicked para evitar el manejo de router navigation en el componente hijo
+  @Output() onCardClicked: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private router: Router) { }
   ngAfterViewInit(): void {
