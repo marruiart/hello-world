@@ -10,10 +10,11 @@ import { UserInfoFavClicked } from './user-info-fav-clicked.interface';
 })
 export class UserInfoComponent implements OnInit, AfterViewInit {
   @Input() user: User | null = null;
-  
+
   @Output() onFavClicked: EventEmitter<UserInfoFavClicked> = new EventEmitter<UserInfoFavClicked>();
   // Emitir @Output() onCardClicked para evitar el manejo de router navigation en el componente hijo
   @Output() onCardClicked: EventEmitter<void> = new EventEmitter<void>();
+  @Output() onDeleteClicked: EventEmitter<void> = new EventEmitter<void>;
 
   constructor(private router: Router) { }
   ngAfterViewInit(): void {
@@ -26,6 +27,11 @@ export class UserInfoComponent implements OnInit, AfterViewInit {
     this.onFavClicked.emit({
       fav: !(this.user?.fav ?? false)
     });
+    event.stopPropagation();
+  }
+
+  onDeleteClick(event: any) {
+    this.onDeleteClicked.emit();
     event.stopPropagation();
   }
 

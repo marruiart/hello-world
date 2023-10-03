@@ -5,10 +5,16 @@
 }
 
 ion-card-header {
-  .fav-button {
+  .fav-button,
+  .del-button {
     position: absolute;
     align-self: self-end;
     z-index: 1;
+    top: -2px;
+  }
+
+  .del-button {
+    right: 50px;
   }
 
   .card-title {

@@ -11,7 +11,7 @@ export interface UserInterface {
   deleteAll(): Observable<void>
 }
 
-export class UserNotFoundException extends Error {}
+export class UserNotFoundException extends Error { }
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +39,15 @@ export class UsersService implements UserInterface {
   }
 
   getUser(id: number): Observable<User> {
-    throw new Error('Method not implemented.');
+    return new Observable(observer => {
+      let user = this._users.value.find(u => u.id == id);
+      if (user) {
+        observer.next(user);
+      } else {
+        observer.error(new UserNotFoundException());
+      }
+      observer.complete();
+    });
   }
 
   updateUser(user: User): Observable<User> {
@@ -51,14 +59,26 @@ export class UsersService implements UserInterface {
         this._users.next(_users);
         observer.next(user);
       } else {
-        observer.error(new UserNotFoundException);
+        observer.error(new UserNotFoundException());
       }
+      observer.complete();
     });
   }
 
   deleteUser(user: User): Observable<User> {
-    throw new Error('Method not implemented.');
+    return new Observable(observer => {
+      let index = this._users.value.findIndex(u => u.id == user.id);
+      if (index != -1) {
+        let _users = [...this._users.value.slice(0, index), ...this._users.value.slice(index + 1)];
+        this._users.next(_users);
+        observer.next(_users[index]);
+      } else {
+        observer.error(new UserNotFoundException());
+      }
+      observer.complete();
+    })
   }
+
   deleteAll(): Observable<void> {
     throw new Error('Method not implemented.');
   }
