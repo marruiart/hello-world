@@ -24,10 +24,8 @@ ion-card-header {
     column-gap: 5%;
     font-weight: bold;
 
-    img {
-      border-radius: 50%;
-      height: 50px;
-      width: 50px;
+    ion-avatar {
+      overflow: hidden;
     }
   }
 }

@@ -25,16 +25,18 @@ export class UsersService implements UserInterface {
   // Implementamos los métodos de la interfaz
   getAll(): Observable<User[]> {
     return new Observable(observer => {
-      let usersData: User[] = [
-        { id: 0, name: "Juan A.", surname: "García Gómez", age: 46, fav: false },
-        { id: 1, name: "María del Mar", surname: "Valencia Valencia", age: 46, fav: false },
-        { id: 2, name: "Alejandro", surname: "García Gómez", age: 45, fav: false },
-        { id: 3, name: "Juan", surname: "García Valencia", age: 4, fav: false },
-        { id: 4, name: "Lydia", surname: "García Robles", age: 11, fav: false }
-      ];
-      this._users.next(usersData);
-      observer.next();
-      observer.complete();
+      setTimeout(() => {
+        let usersData: User[] = [
+          { id: 0, name: "Juan A.", surname: "García Gómez", age: 46, fav: false },
+          { id: 1, name: "María del Mar", surname: "Valencia Valencia", age: 46, fav: false },
+          { id: 2, name: "Alejandro", surname: "García Gómez", age: 45, fav: false },
+          { id: 3, name: "Juan", surname: "García Valencia", age: 4, fav: false },
+          { id: 4, name: "Lydia", surname: "García Robles", age: 11, fav: false }
+        ];
+        this._users.next(usersData);
+        observer.next();
+        observer.complete();
+      }, 1000);
     });
   }
 
@@ -80,7 +82,7 @@ export class UsersService implements UserInterface {
   }
 
   deleteAll(): Observable<void> {
-    throw new Error('Method not implemented.');
+    return new Observable();
   }
 
 

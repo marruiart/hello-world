@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController, ToastOptions } from '@ionic/angular';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { zip } from 'rxjs';
 import { User } from 'src/app/models/user.interface';
+import { FavoritesService } from 'src/app/services/favorites.service';
 import { UsersService } from 'src/app/services/users.service';
 import { UserInfoFavClicked } from './user-info/user-info-fav-clicked.interface';
 
@@ -17,12 +18,13 @@ export class HomePage implements OnInit {
   constructor(
     private router: Router,
     private toast: ToastController,
-    public users: UsersService
+    public users: UsersService,
+    public favs: FavoritesService
   ) { }
 
   ngOnInit(): void {
     this.loading = true;
-    this.users.getAll().subscribe(() => {
+    zip(this.users.getAll(), this.favs.getAll()).subscribe(res => {
       this.loading = false;
     });
   }
@@ -31,23 +33,16 @@ export class HomePage implements OnInit {
     this.router.navigate(["/welcome"]);
   }
 
-  /**
-   * Recibe el evento emitido por el botón de añadir a favorito en el userInfoComponent
-   * @param user usuario asociado a la tarjeta
-   * @param event objeto del tipo UserInfoFavClicked que tiene una propiedad fav que indica si hay que añadir o eliminar de la lista de favoritos
-   */
   onFavClicked(user: User, event: UserInfoFavClicked) {
-    let _user: User = { ...user };
-    _user.fav = event.fav ?? false;
-    this.users.updateUser(_user).subscribe({
+    let obs = (event?.fav) ? this.favs.addFav(user.id) : this.favs.deleteFav(user.id);
+    obs.subscribe({
       next: user => {
-        //Notificamos con un Toast que se ha pulsado
         const options: ToastOptions = {
-          message: `Usuario ${event.fav ? 'añadido' : 'eliminado'} ${event.fav ? 'a' : 'de'} favoritos`,
+          message: `Usuario ${event.fav ? "añadido a" : "eliminado de"} favoritos`,
           duration: 1000,
           position: 'bottom',
-          color: 'warning',
-          cssClass: 'fav-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
+          color: 'danger',
+          cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
         };
 
         //creamos el toast y lo presentamos (es una promesa por eso el then)
@@ -63,7 +58,7 @@ export class HomePage implements OnInit {
     this.users.deleteUser(user).subscribe({
       next: user => {
         const options: ToastOptions = {
-          message: `Usuario con id ${user.id} eliminado`,
+          message: `Usuario con id ${user.id} eliminado de favoritos`,
           duration: 1000,
           position: 'bottom',
           color: 'danger',

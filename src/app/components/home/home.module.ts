@@ -7,6 +7,9 @@ import { HomePage } from './home.page';
 import { HomePageRoutingModule } from './home-routing.module';
 import { UserInfoComponent } from './user-info/user-info.component';
 import { SurnameInitialPipe } from '../../pipes/surname-initial.pipe';
+import { FavsPipe } from 'src/app/pipes/favs.pipe';
+import { MyUppercasePipe } from 'src/app/pipes/my-uppercase.pipe';
+
 
 @NgModule({
   imports: [
@@ -15,8 +18,14 @@ import { SurnameInitialPipe } from '../../pipes/surname-initial.pipe';
     IonicModule,
     HomePageRoutingModule
   ],
-  declarations: [HomePage, UserInfoComponent, SurnameInitialPipe]
+  declarations: [
+    HomePage,
+    UserInfoComponent,
+    SurnameInitialPipe,
+    FavsPipe,
+    MyUppercasePipe
+  ]
 })
 export class HomePageModule {
-  
+
 }

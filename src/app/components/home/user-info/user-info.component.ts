@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../../../models/user.interface';
 import { UserInfoFavClicked } from './user-info-fav-clicked.interface';
@@ -8,7 +8,7 @@ import { UserInfoFavClicked } from './user-info-fav-clicked.interface';
   templateUrl: './user-info.component.html',
   styleUrls: ['./user-info.component.scss'],
 })
-export class UserInfoComponent implements OnInit, AfterViewInit {
+export class UserInfoComponent implements OnInit {
   @Input() user: User | null = null;
 
   @Output() onFavClicked: EventEmitter<UserInfoFavClicked> = new EventEmitter<UserInfoFavClicked>();
@@ -17,9 +17,6 @@ export class UserInfoComponent implements OnInit, AfterViewInit {
   @Output() onDeleteClicked: EventEmitter<void> = new EventEmitter<void>;
 
   constructor(private router: Router) { }
-  ngAfterViewInit(): void {
-    throw new Error('Method not implemented.');
-  }
 
   ngOnInit() { }
 

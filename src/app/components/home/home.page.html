@@ -13,14 +13,15 @@
     </ion-toolbar>
   </ion-header>
 
+  <ion-button (click)="welcome()">{{"Ir a welcome" | myUppercase}}</ion-button>
   <div id="container">
-    <ion-button (click)="welcome()">Ir a welcome</ion-button>
-    <section class="user-info">
-      <app-user-info *ngFor="let user of users.users$ | async" [user]="user" (onFavClicked)="onFavClicked(user, $event)"
-        (onDeleteClicked)="onDeleteClicked(user)"></app-user-info>
+    <section class="user-info" *ngIf="!loading">
+      <app-user-info *ngFor="let user of (users.users$ | async) | favs:(favs.favs$ | async)" [user]="user"
+        (onFavClicked)="onFavClicked(user, $event)" (onDeleteClicked)="onDeleteClicked(user)"></app-user-info>
     </section>
     <strong>Ready to create an app?</strong>
     <p>Start with Ionic <a target="_blank" rel="noopener noreferrer"
         href="https://ionicframework.com/docs/components">UI Components</a></p>
   </div>
+  <ion-loading [isOpen]="loading" class="custom-loading" message="Cargando..."></ion-loading>
 </ion-content>
