@@ -29,8 +29,27 @@ export class HomePage implements OnInit {
     });
   }
 
-  welcome() {
-    this.router.navigate(["/welcome"]);
+  welcome(id: number = -1) {
+    if (id != -1) {
+      this.router.navigate([`/welcome/${id}`])
+    } else {
+      this.router.navigate(["/welcome"]);
+    }
+  }
+
+  onDeleteAllClicked() {
+    this.users.deleteAll().subscribe(del => {
+      const options: ToastOptions = {
+        message: `Todos los usuarios han sido eliminados`,
+        duration: 1000,
+        position: 'bottom',
+        color: 'danger',
+        cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
+      };
+
+      //creamos el toast y lo presentamos (es una promesa por eso el then)
+      this.toast.create(options).then(toast => toast.present());
+    },);
   }
 
   onFavClicked(user: User, event: UserInfoFavClicked) {
@@ -72,5 +91,10 @@ export class HomePage implements OnInit {
         console.log(err);
       }
     });
+  }
+
+  onCardClicked(id: number) {
+    console.log(id);
+    this.welcome(id);
   }
 }

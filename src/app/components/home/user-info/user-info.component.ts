@@ -32,8 +32,9 @@ export class UserInfoComponent implements OnInit {
     event.stopPropagation();
   }
 
-  welcome() {
-    this.router.navigate(["/welcome"]);
+  onCardClick(event: any) {
+    this.onCardClicked.emit();
+    event.stopPropagation();
   }
 
 }

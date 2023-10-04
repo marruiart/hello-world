@@ -71,9 +71,10 @@ export class UsersService implements UserInterface {
     return new Observable(observer => {
       let index = this._users.value.findIndex(u => u.id == user.id);
       if (index != -1) {
+        let removedUser = this._users.value[index];
         let _users = [...this._users.value.slice(0, index), ...this._users.value.slice(index + 1)];
         this._users.next(_users);
-        observer.next(_users[index]);
+        observer.next(removedUser);
       } else {
         observer.error(new UserNotFoundException());
       }
@@ -82,7 +83,11 @@ export class UsersService implements UserInterface {
   }
 
   deleteAll(): Observable<void> {
-    return new Observable();
+    return new Observable(observer => {
+      this._users.next([]);
+      observer.next();
+      observer.complete()
+    });
   }
 
 
