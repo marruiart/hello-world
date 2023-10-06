@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Fav } from '../models/fav.interface';
-import { User } from '../models/user.interface';
 
 export interface FavoritesInterface {
   // Métodos de la interfaz para el CRUD
