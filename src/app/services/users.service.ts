@@ -34,7 +34,7 @@ export class UsersService implements UserInterface {
           { id: 4, name: "Lydia", surname: "García Robles", age: 11, fav: false }
         ];
         this._users.next(usersData);
-        observer.next();
+        observer.next(usersData);
         observer.complete();
       }, 1000);
     });

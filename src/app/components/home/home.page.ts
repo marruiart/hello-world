@@ -1,18 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController, ToastOptions } from '@ionic/angular';
 import { zip } from 'rxjs';
 import { User } from 'src/app/models/user.interface';
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { UsersService } from 'src/app/services/users.service';
-import { UserInfoFavClicked } from './user-info/user-info-fav-clicked.interface';
+import { UserInfoFavClicked } from '../../shared-module/components/user-info/user-info-fav-clicked.interface';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, AfterViewInit {
   public loading: boolean = false;
 
   constructor(
@@ -24,7 +24,13 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
+    this.users.getAll();
+    this.favs.getAll();
+  }
+
+  ngAfterViewInit() {
     zip(this.users.getAll(), this.favs.getAll()).subscribe(res => {
+      console.log(res);
       this.loading = false;
     });
   }
