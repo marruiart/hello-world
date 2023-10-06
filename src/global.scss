@@ -26,17 +26,5 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 .highlight {
-    border-radius:20px;
-    background-color: #474bff;
-    -webkit-box-shadow: 0px 0px 20px 5px #474bff;
-    -moz-box-shadow: 0px 0px 20px 5px #474bff;
-    box-shadow: 0px 0px 20px 5px #474bff;
-    animation-name: shake;
-    animation-duration: 0.2s;
-    animation-iteration-count: 3;
-    animation-direction: alternate-reverse;
-  }
-  @keyframes shake {
-    0%   {transform: rotate(2deg);}
-    100%  {transform: rotate(-2deg);}
-  }
+  background-color: red;
+}

@@ -1,20 +1,5 @@
-#container {
-  
-  p {
-    margin: 0;
-    font-size: 1rem;
-    line-height: 2;
-    color: #8c8c8c;
-  }
-
-  strong {
-    font-size: 1.5rem;
-    line-height: 3;
-  }
-
-  .user-info {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-  }
+.cards-section {
+  margin: 0 5%;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  display: grid;
 }

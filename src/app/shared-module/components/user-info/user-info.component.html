@@ -1,29 +1,59 @@
-<ion-card class="card" color="light" (click)="onCardClick($event)" button>
+<ion-card button color="light" (click)="onCardClick($event)">
   <ion-card-header>
-    <ion-button button class="del-button" fill="clear" aria-label="Trash" (click)="onDeleteClick($event)">
-      <ion-icon slot="icon-only" color="light" name="trash" aria-hidden="true"></ion-icon>
-    </ion-button>
-    <ion-button button class="fav-button" fill="clear" aria-label="Favorite" (click)="onFavClick($event)">
-      <ion-icon *ngIf="!user?.fav; else favIcon" slot="icon-only" color="light" name="heart-outline"
-        aria-hidden="true"></ion-icon>
-      <ng-template #favIcon>
-        <ion-icon slot="icon-only" name="heart" color="danger" aria-hidden="true"></ion-icon>
-      </ng-template>
-    </ion-button>
-
-    <ion-card-title class="card-title">
+    <ion-card-title>
       <ion-avatar>
-        <img alt="Silhouette of a person's head" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+        <img
+          alt="Silhouette of a person's head"
+          src="https://ionicframework.com/docs/img/demos/avatar.svg"
+        />
       </ion-avatar>
-      <span>{{ user?.name }} {{ user?.surname | surnameInitial }}</span>
+      <h2>{{ user?.name }} {{ user?.surname | surnameInitial }}</h2>
     </ion-card-title>
-    <ion-card-content class="card-content">
-      <h3>Nombre</h3>
-      <p>{{ user?.name }}</p>
-      <h3>Apellidos</h3>
-      <p>{{ user?.surname }}</p>
-      <h3>Edad</h3>
-      <p>{{ user?.age }} años</p>
-    </ion-card-content>
+    <div class="card-buttons">
+      <ion-button
+        aria-label="Eliminar usuario"
+        button
+        fill="clear"
+        (click)="onDeleteClick($event)"
+      >
+        <ion-icon
+          aria-hidden="true"
+          color="dark"
+          name="trash"
+          slot="icon-only"
+        ></ion-icon>
+      </ion-button>
+      <ion-button
+        aria-label="Añadir usuario a favoritos"
+        button
+        fill="clear"
+        (click)="onFavClick($event)"
+      >
+        <ion-icon
+          *ngIf="!user?.fav; else favIcon"
+          aria-hidden="true"
+          color="dark"
+          name="heart-outline"
+          slot="icon-only"
+        ></ion-icon>
+        <ng-template #favIcon>
+          <ion-icon
+            aria-hidden="true"
+            color="danger"
+            name="heart"
+            slot="icon-only"
+          ></ion-icon>
+        </ng-template>
+      </ion-button>
+    </div>
   </ion-card-header>
+
+  <ion-card-content>
+    <h3>Nombre</h3>
+    <p>{{ user?.name }}</p>
+    <h3>Apellidos</h3>
+    <p>{{ user?.surname }}</p>
+    <h3>Edad</h3>
+    <p>{{ user?.age }} años</p>
+  </ion-card-content>
 </ion-card>
