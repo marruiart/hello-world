@@ -1,5 +1,15 @@
-.cards-section {
-  margin: 0 5%;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  display: grid;
+.main-section {
+  display: flex;
+
+  .cards-section {
+    flex-basis: 100%;
+    margin: 0 3%;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    display: grid;
+  }
+
+  .favs-section {
+    background-color: var(--ion-color-secondary);
+    flex-basis: 70%;
+  }
 }

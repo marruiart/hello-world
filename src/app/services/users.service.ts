@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { User } from '../models/user.interface';
+import { User } from '../components/home/models/user.interface';
+import { FavoritesService } from './favorites.service';
 
 export interface UserInterface {
   // Métodos de la interfaz para el CRUD
@@ -14,13 +15,13 @@ export interface UserInterface {
 export class UserNotFoundException extends Error { }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root' // Lo hace visible en todos los módulos
 })
 export class UsersService implements UserInterface {
-  _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
-  users$: Observable<User[]> = this._users.asObservable();
+  private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
+  public users$: Observable<User[]> = this._users.asObservable();
 
-  constructor() { }
+  constructor(private favs: FavoritesService) { }
 
   // Implementamos los métodos de la interfaz
   getAll(): Observable<User[]> {
@@ -68,11 +69,14 @@ export class UsersService implements UserInterface {
   }
 
   deleteUser(user: User): Observable<User> {
+    let index = this._users.value.findIndex(u => u.id == user.id);
     return new Observable(observer => {
-      let index = this._users.value.findIndex(u => u.id == user.id);
       if (index != -1) {
         let removedUser = this._users.value[index];
         let _users = [...this._users.value.slice(0, index), ...this._users.value.slice(index + 1)];
+        this.favs.deleteFav(index).subscribe((_) => {
+          console.log("Favorito eliminado");
+        });
         this._users.next(_users);
         observer.next(removedUser);
       } else {

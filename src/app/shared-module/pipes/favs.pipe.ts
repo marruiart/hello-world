@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Fav } from 'src/app/models/fav.interface';
-import { User } from 'src/app/models/user.interface';
+import { Fav } from 'src/app/components/home/models/fav.interface';
+import { User } from 'src/app/components/home/models/user.interface';
 
 @Pipe({
   name: 'favs'
@@ -8,6 +8,7 @@ import { User } from 'src/app/models/user.interface';
 export class FavsPipe implements PipeTransform {
 
   transform(users: User[] | null, favs: Fav[] | null): User[] {
+
     let _users: User[] = [...users ?? []];
     if (favs) {
       _users = _users.map(user => {
@@ -20,7 +21,6 @@ export class FavsPipe implements PipeTransform {
         }
       });
     }
-
     return _users;
   }
 

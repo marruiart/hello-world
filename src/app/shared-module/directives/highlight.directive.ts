@@ -16,7 +16,6 @@ export class HighlightDirective {
   constructor(private el: ElementRef) { }
 
   @HostListener('mouseenter') onMouseEnter() {
-    console.log("mouseenter")
     this.setHighlight();
   }
 

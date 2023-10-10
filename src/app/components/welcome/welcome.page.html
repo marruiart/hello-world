@@ -4,4 +4,13 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true"></ion-content>
+<ion-content [fullscreen]="true">
+  <ion-button (click)="home()"> Ir a home </ion-button>
+  <app-user-info *ngIf="!loading"
+    appHighlight
+    [user]="user"
+    (onFavClicked)="onFavClicked(id, $event)"
+    (onDeleteClicked)="onDeleteClicked(user)"
+  ></app-user-info>
+</ion-content>
+<ion-loading [isOpen]="loading" message="Cargando..."></ion-loading>

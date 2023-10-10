@@ -26,5 +26,10 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 .highlight {
-  background-color: red;
+  transform: scale(1.1) rotate(2deg);
+  z-index: 10;
+}
+
+.highlight ion-card {
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }

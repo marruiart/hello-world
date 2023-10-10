@@ -15,10 +15,6 @@ const routes: Routes = [
     path: 'welcome',
     loadChildren: () => import('./components/welcome/welcome.module').then(m => m.WelcomePageModule)
   },
-  {
-    path: 'welcome/:id',
-    loadChildren: () => import('./components/welcome/welcome.module').then(m => m.WelcomePageModule)
-  }
 ];
 
 @NgModule({

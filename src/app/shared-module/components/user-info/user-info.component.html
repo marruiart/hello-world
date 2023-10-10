@@ -1,4 +1,4 @@
-<ion-card button color="light" (click)="onCardClick($event)">
+<ion-card button color="dark" (click)="onCardClick($event)">
   <ion-card-header>
     <ion-card-title>
       <ion-avatar>
@@ -18,7 +18,7 @@
       >
         <ion-icon
           aria-hidden="true"
-          color="dark"
+          color="light"
           name="trash"
           slot="icon-only"
         ></ion-icon>
@@ -32,7 +32,7 @@
         <ion-icon
           *ngIf="!user?.fav; else favIcon"
           aria-hidden="true"
-          color="dark"
+          color="light"
           name="heart-outline"
           slot="icon-only"
         ></ion-icon>

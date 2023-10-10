@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Fav } from '../models/fav.interface';
+import { Fav } from '../components/home/models/fav.interface';
+import { UserNotFoundException } from './users.service';
 
 export interface FavoritesInterface {
   // Métodos de la interfaz para el CRUD
   getAll(): Observable<Fav[]>;
-  /*   addFav(fav: Favorite): Observable<Favorite>;
-    deleteFav(fav: User): Observable<Favorite>; */
+  getFav(id: number): Observable<Fav>;
+  addFav(userId: number): Observable<Fav>;
+  deleteFav(userId: number): Observable<Fav>;
 }
 
 @Injectable({
@@ -17,6 +19,7 @@ export class FavoritesService implements FavoritesInterface {
   public favs$: Observable<Fav[]> = this._favs.asObservable();
 
   constructor() { }
+
   getAll(): Observable<Fav[]> {
     return new Observable(observer => {
       setTimeout(() => {
@@ -30,6 +33,14 @@ export class FavoritesService implements FavoritesInterface {
         observer.complete();
       }, 2000);
     });
+  }
+
+  getFav(id: number): Observable<Fav> {
+    return new Observable(observer => {
+      let fav: Fav | undefined = this._favs.value.find(f => f.id == id);
+      observer.next(fav);
+      observer.complete();
+    })
   }
 
   addFav(userId: number): Observable<Fav> {
@@ -50,22 +61,15 @@ export class FavoritesService implements FavoritesInterface {
     return new Observable(observer => {
       let favs = [...this._favs.value];
       var index = favs.findIndex(fav => userId == fav.id);
-      if (index == -1) {
-        observer.error();
+      if (index != -1) {
+        favs.splice(index, 1);
+        observer.next(this._favs.value[index]);
+        this._favs.next(favs);
       } else {
-       favs.splice(index, 1);
+        observer.error(new UserNotFoundException());
       }
-      this._favs.next(favs);
-      observer.next(favs[index]);
       observer.complete();
     })
   }
-
-  deleteAll(): Observable<void> {
-    return new Observable(observer => {
-
-    });
-  }
-
 
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '../../../models/user.interface';
+import { User } from '../../../components/home/models/user.interface';
 import { UserInfoFavClicked } from './user-info-fav-clicked.interface';
 
 @Component({
@@ -12,9 +12,9 @@ export class UserInfoComponent implements OnInit {
   @Input() user: User | null = null;
 
   @Output() onFavClicked: EventEmitter<UserInfoFavClicked> = new EventEmitter<UserInfoFavClicked>();
+  @Output() onDeleteClicked: EventEmitter<void> = new EventEmitter<void>;
   // Emitir @Output() onCardClicked para evitar el manejo de router navigation en el componente hijo
   @Output() onCardClicked: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onDeleteClicked: EventEmitter<void> = new EventEmitter<void>;
 
   constructor(private router: Router) { }
 

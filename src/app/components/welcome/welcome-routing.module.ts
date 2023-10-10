@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: WelcomePage
+  },
+  {
+    path: ':id',
+    component: WelcomePage
   }
 ];
 
@@ -14,4 +18,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class WelcomePageRoutingModule {}
+export class WelcomePageRoutingModule { }
