@@ -66,6 +66,7 @@ export class FavoritesService implements FavoritesInterface {
         observer.next(this._favs.value[index]);
         this._favs.next(favs);
       } else {
+        console.warn(`Usuario con id ${userId} no encontrado en favoritos`);
         observer.error(new UserNotFoundException());
       }
       observer.complete();

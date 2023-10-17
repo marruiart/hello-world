@@ -6,27 +6,40 @@ import { SurnameInitialPipe } from './pipes/surname-initial.pipe';
 import { FavInfoComponent } from './components/fav-info/fav-info.component';
 import { HighlightDirective } from './directives/highlight.directive';
 import { FavsPipe } from './pipes/favs.pipe';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { UserFormComponent } from './components/user-form/user-form.component';
 
 
 
 @NgModule({
   declarations: [
+    //Components
     UserInfoComponent,
     FavInfoComponent,
-    SurnameInitialPipe,
+    UserFormComponent,
+    //Directives
     HighlightDirective,
-    FavsPipe
+    //Pipes
+    FavsPipe,
+    SurnameInitialPipe,
   ],
   imports: [
     CommonModule,
-    IonicModule
+    IonicModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
     CommonModule, // Al exportar este módulo aquí, podemos quitarlo de la importación de los demás módulos
     IonicModule,
+    FormsModule,
+    ReactiveFormsModule,
+    //Components
     UserInfoComponent,
     FavInfoComponent,
+    //Directives
     HighlightDirective,
+    //Pipes
     FavsPipe
   ]
 })

@@ -6,9 +6,14 @@
 
 <ion-content [fullscreen]="true">
   <section class="buttons-section">
-    <ion-button (click)="welcome()"
-      >{{"Ir a welcome" | myUppercase}}</ion-button
-    >
+    <ion-button button (click)="onNewUser($event)">
+      <ion-icon
+        aria-hidden="true"
+        name="add-circle-outline"
+        slot="icon-only"
+      ></ion-icon>
+      {{"Nuevo usuario" | myUppercase}}
+    </ion-button>
     <ion-button (click)="onDeleteAllClicked()"
       >{{"Eliminar todos" | myUppercase}}</ion-button
     >

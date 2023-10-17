@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController, ToastOptions } from '@ionic/angular';
+import { ModalController, ToastController, ToastOptions } from '@ionic/angular';
 import { zip } from 'rxjs';
 import { User } from 'src/app/components/home/models/user.interface';
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { UsersService } from 'src/app/services/users.service';
+import { UserFormComponent } from 'src/app/shared-module/components/user-form/user-form.component';
 import { UserInfoFavClicked } from '../../shared-module/components/user-info/user-info-fav-clicked.interface';
 
 @Component({
@@ -20,7 +21,8 @@ export class HomePage implements OnInit {
     private router: Router,
     private toast: ToastController,
     public users: UsersService,
-    public favs: FavoritesService
+    public favs: FavoritesService,
+    public modal: ModalController
   ) { }
 
   ngOnInit(): void {
@@ -65,6 +67,39 @@ export class HomePage implements OnInit {
     });
   }
 
+  async presentForm(onDismiss: ((result: any) => void)) {
+    const modal = await this.modal.create({
+      component: UserFormComponent,
+      cssClass: "modal-ful-right-side"
+    });
+    modal.present();
+    modal.onDidDismiss().then(result => {
+      // result recibe el rol del modal y el data
+      if (result && result.data) {
+        onDismiss(result.data);
+      }
+    })
+  }
+
+  onNewUser(event: any) {
+    // función de orden superior, se pasa otra función 
+    /*
+    **EQUIVALENTE**
+    var onDismiss = (data: any => {
+      console.log(data);
+    })
+
+    this.presentForm(onDismiss);
+    */
+    this.presentForm((data) => {
+      //Aquí llamamos para añadir ese usuario
+      console.log(data);
+      this.users.addUser(data).subscribe();
+
+    });
+  }
+
+
   onFavClicked(id: number, event: UserInfoFavClicked) {
     let obs = (event?.fav) ? this.favs.addFav(id) : this.favs.deleteFav(id);
     obs.subscribe({
@@ -93,8 +128,10 @@ export class HomePage implements OnInit {
   }
 
   onDeleteClicked(user: User) {
-    this.users.deleteUser(user).subscribe({
-      next: user => {
+    zip(this.users.deleteUser(user), this.favs.deleteFav(user.id)).subscribe({
+      next: res => {
+        let user = res[0];
+        console.log(res[1]);
         const options: ToastOptions = {
           message: `Usuario con id ${user.id} eliminado`,
           duration: 1000,
@@ -107,7 +144,7 @@ export class HomePage implements OnInit {
         this.toast.create(options).then(toast => toast.present());
       },
       error: err => {
-        console.log(err);
+        console.error(err);
       }
     });
   }

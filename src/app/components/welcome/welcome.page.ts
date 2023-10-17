@@ -66,8 +66,9 @@ export class WelcomePage implements OnInit {
   }
 
   onDeleteClicked(user: User) {
-    this.users.deleteUser(user).subscribe({
-      next: user => {
+    zip(this.users.deleteUser(user), this.favs.deleteFav(user.id)).subscribe({
+      next: res => {
+        let user = res[0];
         const options: ToastOptions = {
           message: `Usuario con id ${user.id} eliminado`,
           duration: 1000,
@@ -81,7 +82,8 @@ export class WelcomePage implements OnInit {
         this.home();
       },
       error: err => {
-        console.log(err);
+        console.error(err);
+        this.home();
       }
     });
   }

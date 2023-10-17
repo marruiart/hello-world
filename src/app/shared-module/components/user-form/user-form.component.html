@@ -1,0 +1,15 @@
+<form [formGroup]="userForm" (ngSubmit)="onApply()" color="dark">
+  <label for="name">
+    <span>Nombre:</span>
+    <input id="name" type="text" formControlName="name" />
+  </label>
+  <label for="surname">
+    <span>Apellido:</span>
+    <input id="surname" type="text" formControlName="surname" />
+  </label>
+  <label for="age">
+    <span>Edad:</span>
+    <input id="age" type="text" formControlName="age" />
+  </label>
+  <ion-button button type="ngSubmit" [disabled]="!userForm.valid">Aceptar</ion-button>
+</form>

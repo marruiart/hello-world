@@ -8,7 +8,11 @@ import { User } from 'src/app/components/home/models/user.interface';
 export class FavsPipe implements PipeTransform {
 
   transform(users: User[] | null, favs: Fav[] | null): User[] {
+    /*if ((users as User).id != undefined) {
 
+    } else {
+      
+    }*/
     let _users: User[] = [...users ?? []];
     if (favs) {
       _users = _users.map(user => {

@@ -1,0 +1,40 @@
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  row-gap: 1.2rem;
+  width: 100%;
+  height: 100%;
+  padding: 50px;
+  background-color: var(--ion-color-dark);
+
+  label {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5rem;
+
+    span {
+      color: white;
+    }
+
+    input {
+      border-radius: 10px;
+      padding: 10px 15px;
+    }
+  }
+
+  ion-button {
+    margin-top: 30px;
+  }
+  p {
+    color: white;
+  }
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border: 3px solid #42A948; /* green */
+}
+
+.ng-invalid:not(form)  {
+  border: 3px solid #a94442; /* red */
+}

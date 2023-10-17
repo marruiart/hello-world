@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { User } from '../components/home/models/user.interface';
-import { FavoritesService } from './favorites.service';
 
 export interface UserInterface {
   // Métodos de la interfaz para el CRUD
@@ -18,10 +17,11 @@ export class UserNotFoundException extends Error { }
   providedIn: 'root' // Lo hace visible en todos los módulos
 })
 export class UsersService implements UserInterface {
+  private _id: number = 5;
   private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   public users$: Observable<User[]> = this._users.asObservable();
 
-  constructor(private favs: FavoritesService) { }
+  constructor() { }
 
   // Implementamos los métodos de la interfaz
   getAll(): Observable<User[]> {
@@ -39,6 +39,10 @@ export class UsersService implements UserInterface {
         observer.complete();
       }, 1000);
     });
+  }
+
+  getNextId(): number {
+    return this._id++;
   }
 
   getUser(id: number): Observable<User> {
@@ -68,15 +72,26 @@ export class UsersService implements UserInterface {
     });
   }
 
+  addUser(user: User): Observable<User> {
+    return new Observable(observer => {
+      if (user) {
+        let users = [...this._users.value];
+        users.push(user);
+        this._users.next(users);
+        observer.next(user);
+      } else {
+        observer.error(new UserNotFoundException());
+      }
+      observer.complete();
+    });
+  }
+
   deleteUser(user: User): Observable<User> {
     let index = this._users.value.findIndex(u => u.id == user.id);
     return new Observable(observer => {
       if (index != -1) {
         let removedUser = this._users.value[index];
         let _users = [...this._users.value.slice(0, index), ...this._users.value.slice(index + 1)];
-        this.favs.deleteFav(index).subscribe((_) => {
-          console.log("Favorito eliminado");
-        });
         this._users.next(_users);
         observer.next(removedUser);
       } else {
