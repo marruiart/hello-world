@@ -67,36 +67,93 @@ export class HomePage implements OnInit {
     });
   }
 
-  async presentForm(onDismiss: ((result: any) => void)) {
+  async presentForm(data: User | null, onDismiss: ((result: any) => void)) {
     const modal = await this.modal.create({
       component: UserFormComponent,
+      componentProps: {
+        mode: data ? 'Edit' : 'New',
+        user: data
+      },
       cssClass: "modal-ful-right-side"
     });
     modal.present();
     modal.onDidDismiss().then(result => {
       // result recibe el rol del modal y el data
       if (result && result.data) {
-        onDismiss(result.data);
+        onDismiss(result);
       }
     })
   }
 
-  onNewUser(event: any) {
-    // función de orden superior, se pasa otra función 
-    /*
-    **EQUIVALENTE**
-    var onDismiss = (data: any => {
-      console.log(data);
-    })
+  onCardClicked(user: User) {
+    let onDismiss = (info: any) => {
+      switch (info.role) {
+        case 'submit': {
+          this.users.updateUser(info.data).subscribe(async user => {
+            const options: ToastOptions = {
+              message: `Usuario modificado`,
+              duration: 1000,
+              position: 'bottom',
+              color: 'danger',
+              cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
+            };
 
-    this.presentForm(onDismiss);
-    */
-    this.presentForm((data) => {
-      //Aquí llamamos para añadir ese usuario
-      console.log(data);
-      this.users.addUser(data).subscribe();
+            //creamos el toast y lo presentamos (es una promesa por eso el then)
+            const toast = await this.toast.create(options);
+            toast.present();
+          })
+        }
+          break;
+        case 'delete': {
+          this.users.deleteUser(info.data).subscribe(async user => {
+            const options: ToastOptions = {
+              message: `Usuario eliminado`,
+              duration: 1000,
+              position: 'bottom',
+              color: 'danger',
+              cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
+            };
 
-    });
+            //creamos el toast y lo presentamos (es una promesa por eso el then)
+            const toast = await this.toast.create(options);
+            toast.present();
+          })
+        }
+          break;
+        default: {
+          console.error("No debería entrar")
+        }
+      }
+    }
+    this.presentForm(user, onDismiss);
+  }
+
+  onNewUser() {
+    let onDismiss = (info: any) => {
+      switch (info.role) {
+        case 'submit': {
+          this.users.addUser(info.data).subscribe(async user => {
+            const options: ToastOptions = {
+              message: `Usuario creado`,
+              duration: 1000,
+              position: 'bottom',
+              color: 'danger',
+              cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
+            };
+
+            //creamos el toast y lo presentamos (es una promesa por eso el then)
+            const toast = await this.toast.create(options);
+            toast.present();
+          })
+        }
+          break;
+        default: {
+          console.error("No debería entrar")
+        }
+
+      }
+    }
+    this.presentForm(null, onDismiss);
   }
 
 
@@ -147,10 +204,6 @@ export class HomePage implements OnInit {
         console.error(err);
       }
     });
-  }
-
-  onCardClicked(id: number) {
-    this.welcome(id);
   }
 
   showFavs() {

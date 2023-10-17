@@ -10,7 +10,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserFormComponent } from './components/user-form/user-form.component';
 
 
-
 @NgModule({
   declarations: [
     //Components
@@ -36,6 +35,7 @@ import { UserFormComponent } from './components/user-form/user-form.component';
     ReactiveFormsModule,
     //Components
     UserInfoComponent,
+    UserFormComponent,
     FavInfoComponent,
     //Directives
     HighlightDirective,

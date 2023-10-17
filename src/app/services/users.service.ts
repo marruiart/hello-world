@@ -17,7 +17,7 @@ export class UserNotFoundException extends Error { }
   providedIn: 'root' // Lo hace visible en todos los módulos
 })
 export class UsersService implements UserInterface {
-  private _id: number = 5;
+  private _id: number = 0;
   private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   public users$: Observable<User[]> = this._users.asObservable();
 
@@ -34,6 +34,7 @@ export class UsersService implements UserInterface {
           { id: 3, name: "Juan", surname: "García Valencia", age: 4, fav: false },
           { id: 4, name: "Lydia", surname: "García Robles", age: 11, fav: false }
         ];
+        this._id = 5;
         this._users.next(usersData);
         observer.next(usersData);
         observer.complete();
@@ -41,14 +42,25 @@ export class UsersService implements UserInterface {
     });
   }
 
-  getNextId(): number {
-    return this._id++;
-  }
-
   getUser(id: number): Observable<User> {
     return new Observable(observer => {
       let user = this._users.value.find(u => u.id == id);
       if (user) {
+        observer.next(user);
+      } else {
+        observer.error(new UserNotFoundException());
+      }
+      observer.complete();
+    });
+  }
+
+  addUser(user: User): Observable<User> {
+    return new Observable(observer => {
+      if (user) {
+        let _users = [...this._users.value];
+        user.id = ++this._id;
+        _users.push(user);
+        this._users.next(_users);
         observer.next(user);
       } else {
         observer.error(new UserNotFoundException());
@@ -64,20 +76,6 @@ export class UsersService implements UserInterface {
       if (index != -1) {
         _users[index] = user;
         this._users.next(_users);
-        observer.next(user);
-      } else {
-        observer.error(new UserNotFoundException());
-      }
-      observer.complete();
-    });
-  }
-
-  addUser(user: User): Observable<User> {
-    return new Observable(observer => {
-      if (user) {
-        let users = [...this._users.value];
-        users.push(user);
-        this._users.next(users);
         observer.next(user);
       } else {
         observer.error(new UserNotFoundException());

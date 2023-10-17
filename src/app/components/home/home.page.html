@@ -6,7 +6,7 @@
 
 <ion-content [fullscreen]="true">
   <section class="buttons-section">
-    <ion-button button (click)="onNewUser($event)">
+    <ion-button button (click)="onNewUser()">
       <ion-icon
         aria-hidden="true"
         name="add-circle-outline"
@@ -29,7 +29,7 @@
         [user]="user"
         (onFavClicked)="onFavClicked(user.id, $event)"
         (onDeleteClicked)="onDeleteClicked(user)"
-        (onCardClicked)="onCardClicked(user.id)"
+        (onCardClicked)="onCardClicked(user)"
       ></app-user-info>
     </main>
 

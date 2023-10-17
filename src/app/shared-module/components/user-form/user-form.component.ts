@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
+import { Component, Input } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ModalController, Platform } from '@ionic/angular';
 import { User } from 'src/app/components/home/models/user.interface';
-import { UsersService } from 'src/app/services/users.service';
 
 @Component({
   selector: 'app-user-form',
@@ -10,30 +9,42 @@ import { UsersService } from 'src/app/services/users.service';
   styleUrls: ['./user-form.component.scss'],
 })
 export class UserFormComponent {
-  public userForm: FormGroup = this.fb.group({
-    name: [null, Validators.required],
-    surname: [null, Validators.required],
-    age: [null, [Validators.required, this.validateAge()]]
-  })
-
-  public formInput!: String;
+  public form: FormGroup;
+  @Input() mode: 'New' | 'Edit' = 'New';
+  @Input() set user(_user: User | null) {
+    if (_user) {
+      this.mode = 'Edit';
+      this.form.controls['id'].setValue(_user.id);
+      this.form.controls['name'].setValue(_user.name);
+      this.form.controls['surname'].setValue(_user.surname);
+      this.form.controls['age'].setValue(_user.age);
+    }
+  }
 
   constructor(
-    private addUserModal: ModalController,
-    private userService: UsersService,
-    private fb: FormBuilder
-  ) { }
+    private _modal: ModalController,
+    private fb: FormBuilder,
+    public platform: Platform
+  ) {
+    console.log(this.platform);
+    this.form = this.fb.group({
+      id: [null],
+      name: ['', Validators.required],
+      surname: ['', Validators.required],
+      age: [0, [Validators.required, this.validateAge()]]
+    })
+  }
 
-  onApply() {
-    let user: User = {
-      id: this.userService.getNextId(),
-      name: this.userForm.value.name,
-      surname: this.userForm.value.surname,
-      age: this.userForm.value.age,
-      fav: false
-    }
-    // apply es el rol que tiene este modal
-    this.addUserModal.dismiss(user, "apply");
+  onSubmit() {
+    this._modal.dismiss(this.form.value, "submit");
+  }
+
+  onCancel() {
+    this._modal.dismiss(null, "cancel");
+  }
+
+  onDelete() {
+    this._modal.dismiss(this.form.value, 'delete')
   }
 
   validateAge(): { [key: string]: any } | null {
