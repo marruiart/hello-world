@@ -40,21 +40,6 @@ export class HomePage implements OnInit {
     }
   }
 
-  onDeleteAllClicked() {
-    this.users.deleteAll().subscribe(del => {
-      const options: ToastOptions = {
-        message: `Todos los usuarios han sido eliminados`,
-        duration: 1000,
-        position: 'bottom',
-        color: 'danger',
-        cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
-      };
-
-      //creamos el toast y lo presentamos (es una promesa por eso el then)
-      this.toast.create(options).then(toast => toast.present());
-    },);
-  }
-
   undoChanges(id: number, isAddFav: boolean) {
     let obs = isAddFav ? this.favs.addFav(id) : this.favs.deleteFav(id);
     obs.subscribe({
@@ -95,7 +80,6 @@ export class HomePage implements OnInit {
               duration: 1000,
               position: 'bottom',
               color: 'danger',
-              cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
             };
 
             //creamos el toast y lo presentamos (es una promesa por eso el then)
@@ -111,7 +95,6 @@ export class HomePage implements OnInit {
               duration: 1000,
               position: 'bottom',
               color: 'danger',
-              cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
             };
 
             //creamos el toast y lo presentamos (es una promesa por eso el then)
