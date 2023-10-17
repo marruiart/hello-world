@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController, ToastOptions } from '@ionic/angular';
 import { zip } from 'rxjs';
-import { FavoritesService } from 'src/app/services/favorites.service';
-import { UsersService } from 'src/app/services/users.service';
+import { FavoritesService } from 'src/app/core/services/favorites.service';
+import { UsersService } from 'src/app/core/services/users.service';
 import { UserInfoFavClicked } from 'src/app/shared-module/components/user-info/user-info-fav-clicked.interface';
-import { User } from '../home/models/user.interface';
+import { User } from '../../core/models/user.interface';
 
 @Component({
   selector: 'app-welcome',

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { User } from '../../../components/home/models/user.interface';
+import { User } from '../../../core/models/user.interface';
 import { UserInfoFavClicked } from './user-info-fav-clicked.interface';
 
 @Component({

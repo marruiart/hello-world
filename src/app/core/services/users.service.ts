@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { User } from '../components/home/models/user.interface';
+import { User } from '../models/user.interface';
 
 export interface UserInterface {
   // Métodos de la interfaz para el CRUD

@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalController, ToastController, ToastOptions } from '@ionic/angular';
 import { zip } from 'rxjs';
-import { User } from 'src/app/components/home/models/user.interface';
-import { FavoritesService } from 'src/app/services/favorites.service';
-import { UsersService } from 'src/app/services/users.service';
+import { User } from 'src/app/core/models/user.interface';
+import { FavoritesService } from 'src/app/core/services/favorites.service';
+import { UsersService } from 'src/app/core/services/users.service';
 import { UserFormComponent } from 'src/app/shared-module/components/user-form/user-form.component';
 import { UserInfoFavClicked } from '../../shared-module/components/user-info/user-info-fav-clicked.interface';
 

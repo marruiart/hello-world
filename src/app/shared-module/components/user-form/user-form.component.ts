@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, Platform } from '@ionic/angular';
-import { User } from 'src/app/components/home/models/user.interface';
+import { User } from 'src/app/core/models/user.interface';
 
 @Component({
   selector: 'app-user-form',
