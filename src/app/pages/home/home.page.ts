@@ -15,7 +15,6 @@ import { UserInfoFavClicked } from '../../shared-module/components/user-info/use
 })
 export class HomePage implements OnInit {
   public loading: boolean = false;
-  public favsVisible = false;
 
   constructor(
     private router: Router,
@@ -189,7 +188,4 @@ export class HomePage implements OnInit {
     });
   }
 
-  showFavs() {
-    this.favsVisible = !this.favsVisible;
-  }
 }

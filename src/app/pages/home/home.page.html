@@ -4,7 +4,23 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-menu contentId="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Mis favoritos</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content class="ion-padding">
+    <app-fav-info
+      *ngFor="let fav of (favs.favs$ | async)"
+      [id]="fav.id"
+      (onFavRemoved)="onFavClicked(fav.id, $event)"
+    ></app-fav-info>
+  </ion-content>
+</ion-menu>
+
+<ion-content [fullscreen]="true" id="main-content">
+  
   <section class="buttons-section">
     <ion-button button (click)="onNewUser()">
       <ion-icon
@@ -14,11 +30,11 @@
       ></ion-icon>
       {{"Nuevo usuario" | myUppercase}}
     </ion-button>
-    
-    <ion-button (click)="showFavs()"
-      >{{"Ver favoritos" | myUppercase}}</ion-button
-    >
+    <ion-menu-toggle>
+      <ion-button>{{"Ver favoritos" | myUppercase}}</ion-button>
+    </ion-menu-toggle>
   </section>
+
   <section class="main-section">
     <main class="cards-section" *ngIf="!loading">
       <app-user-info
@@ -30,14 +46,6 @@
         (onCardClicked)="onCardClicked(user)"
       ></app-user-info>
     </main>
-
-    <aside class="favs-section" *ngIf="favsVisible">
-      <app-fav-info
-        *ngFor="let fav of (favs.favs$ | async)"
-        [id]="fav.id"
-        (onFavRemoved)="onFavClicked(fav.id, $event)"
-      ></app-fav-info>
-    </aside>
   </section>
   <ion-loading [isOpen]="loading" message="Cargando..."></ion-loading>
 </ion-content>
