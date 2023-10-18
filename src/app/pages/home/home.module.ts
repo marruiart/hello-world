@@ -11,8 +11,8 @@ import { IonicModule } from '@ionic/angular';
 @NgModule({
   imports: [
     HomePageRoutingModule,
-    SharedModule,
     IonicModule,
+    SharedModule
   ],
   declarations: [
     HomePage,

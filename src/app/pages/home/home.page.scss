@@ -7,9 +7,8 @@
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     display: grid;
   }
+}
 
-  .favs-section {
-    background-color: var(--ion-color-secondary);
-    flex-basis: 70%;
-  }
+ion-menu {
+  --min-width: 350px;
 }

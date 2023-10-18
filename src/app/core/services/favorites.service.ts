@@ -1,5 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { Fav } from '../models/fav.interface';
 import { UserNotFoundException } from './users.service';
 
@@ -18,21 +20,14 @@ export class FavoritesService implements FavoritesInterface {
   private _favs: BehaviorSubject<Fav[]> = new BehaviorSubject<Fav[]>([]);
   public favs$: Observable<Fav[]> = this._favs.asObservable();
 
-  constructor() { }
+  constructor(
+    private httpClient: HttpClient
+  ) { }
 
   getAll(): Observable<Fav[]> {
-    return new Observable(observer => {
-      setTimeout(() => {
-        let favs: Fav[] = [
-          { id: 0 },
-          { id: 2 },
-          { id: 4 }
-        ]
-        this._favs.next(favs);
-        observer.next(favs);
-        observer.complete();
-      }, 2000);
-    });
+    return this.httpClient.get<Fav[]>(environment.API_URL + "favs").pipe(tap(favs => {
+      this._favs.next(favs);
+    }))
   }
 
   getFav(id: number): Observable<Fav> {

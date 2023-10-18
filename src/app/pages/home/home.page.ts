@@ -8,6 +8,7 @@ import { UsersService } from 'src/app/core/services/users.service';
 import { UserFormComponent } from 'src/app/shared-module/components/user-form/user-form.component';
 import { UserInfoFavClicked } from '../../shared-module/components/user-info/user-info-fav-clicked.interface';
 
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -26,18 +27,16 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    zip(this.users.getAll(), this.favs.getAll()).subscribe((_) => {
-      this.loading = false;
+    zip(this.users.getAll(), this.favs.getAll()).subscribe({
+        next:res=>{
+            this.loading = false;
+        },
+        error:err=>{
+          console.error(err);
+        }
     });
   }
 
-  welcome(id: number = -1) {
-    if (id != -1) {
-      this.router.navigate([`/welcome/${id}`])
-    } else {
-      this.router.navigate(["/welcome"]);
-    }
-  }
 
   undoChanges(id: number, isAddFav: boolean) {
     let obs = isAddFav ? this.favs.addFav(id) : this.favs.deleteFav(id);
@@ -144,7 +143,7 @@ export class HomePage implements OnInit {
     obs.subscribe({
       next: user => {
         const options: ToastOptions = {
-          message: `Usuario ${event.fav ? "añadido a" : "eliminado de"} favoritos`,
+          message: `Usuario ${user.id} ${event.fav ? "añadido a" : "eliminado de"} favoritos`,
           duration: 1000,
           position: 'bottom',
           color: 'danger',

@@ -1,5 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { User } from '../models/user.interface';
 
 export interface UserInterface {
@@ -15,31 +17,22 @@ export class UserNotFoundException extends Error { }
 
 @Injectable({
   providedIn: 'root' // Lo hace visible en todos los módulos
+  
 })
 export class UsersService implements UserInterface {
   private _id: number = 0;
   private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   public users$: Observable<User[]> = this._users.asObservable();
 
-  constructor() { }
+  constructor(
+    private httpClient:HttpClient
+  ) { }
 
   // Implementamos los métodos de la interfaz
   getAll(): Observable<User[]> {
-    return new Observable(observer => {
-      setTimeout(() => {
-        let usersData: User[] = [
-          { id: 0, name: "Juan A.", surname: "García Gómez", age: 46, fav: false },
-          { id: 1, name: "María del Mar", surname: "Valencia Valencia", age: 46, fav: false },
-          { id: 2, name: "Alejandro", surname: "García Gómez", age: 45, fav: false },
-          { id: 3, name: "Juan", surname: "García Valencia", age: 4, fav: false },
-          { id: 4, name: "Lydia", surname: "García Robles", age: 11, fav: false }
-        ];
-        this._id = 5;
-        this._users.next(usersData);
-        observer.next(usersData);
-        observer.complete();
-      }, 1000);
-    });
+    return this.httpClient.get<User[]>(environment.API_URL + "users").pipe(tap(_users=>{
+      this._users.next(_users);
+    }));
   }
 
   getUser(id: number): Observable<User> {

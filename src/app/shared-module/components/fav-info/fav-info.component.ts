@@ -9,15 +9,31 @@ import { UserInfoFavClicked } from '../user-info/user-info-fav-clicked.interface
   styleUrls: ['./fav-info.component.scss'],
 })
 export class FavInfoComponent implements OnInit {
-  @Input() id!: number;
-  public user!: User;
+  public user: User | null;
+  private _id: number = 0;
+  @Input() set id(newId: number) {
+    this._id = newId;
+    if (this._id != 0) {
+      this.users.getUser(this._id).subscribe({
+        next: res => {
+          this.user = res;
+        },
+        error: err => {
+          console.error(err);
+        }
+      });
+    }
+  }
+  get id(): number {
+    return this._id;
+  }
   @Output() onFavRemoved: EventEmitter<UserInfoFavClicked> = new EventEmitter<UserInfoFavClicked>();
 
-  constructor(private users: UsersService) { }
-
-  ngOnInit() {
-    this.users.getUser(this.id).subscribe(res => this.user = res);
+  constructor(private users: UsersService) {
+    this.user = null;
   }
+
+  ngOnInit() { }
 
   removeFav(event: any) {
     this.onFavRemoved.emit({

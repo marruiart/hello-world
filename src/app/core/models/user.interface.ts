@@ -3,5 +3,5 @@ export interface User {
     name: string,
     surname: string,
     age: number,
-    fav: boolean
+    fav?: boolean
 }
