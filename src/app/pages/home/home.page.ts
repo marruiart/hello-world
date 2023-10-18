@@ -28,12 +28,12 @@ export class HomePage implements OnInit {
   ngOnInit(): void {
     this.loading = true;
     zip(this.users.getAll(), this.favs.getAll()).subscribe({
-        next:res=>{
-            this.loading = false;
-        },
-        error:err=>{
-          console.error(err);
-        }
+      next: res => {
+        this.loading = false;
+      },
+      error: err => {
+        console.error(err);
+      }
     });
   }
 
@@ -166,28 +166,44 @@ export class HomePage implements OnInit {
   }
 
   onDeleteClicked(user: User) {
-    /* zip(this.users.deleteUser(user), this.favs.deleteFav(user.id)).subscribe({ */
-    this.users.deleteUser(user).subscribe({
-      next: res => {
-        let user = res;
-        console.log(user);
-        /* let user = res[0];
-        console.log(res[1]); */
-        const options: ToastOptions = {
-          message: `Usuario con id ${user.id} eliminado`,
-          duration: 1000,
-          position: 'bottom',
-          color: 'danger',
-          cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
-        };
+    if (user.fav) {
+      zip(this.users.deleteUser(user), this.favs.deleteFav(user.id)).subscribe({
+        next: res => {
+          let user = res[0];
+          const options: ToastOptions = {
+            message: `Usuario con id ${user.id} eliminado`,
+            duration: 1000,
+            position: 'bottom',
+            color: 'danger',
+            cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
+          };
 
-        //creamos el toast y lo presentamos (es una promesa por eso el then)
-        this.toast.create(options).then(toast => toast.present());
-      },
-      error: err => {
-        console.error(err);
-      }
-    });
+          //creamos el toast y lo presentamos (es una promesa por eso el then)
+          this.toast.create(options).then(toast => toast.present());
+        },
+        error: err => {
+          console.error(err);
+        }
+      });
+    } else {
+      this.users.deleteUser(user).subscribe({
+        next: user => {
+          const options: ToastOptions = {
+            message: `Usuario con id ${user.id} eliminado`,
+            duration: 1000,
+            position: 'bottom',
+            color: 'danger',
+            cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
+          };
+
+          //creamos el toast y lo presentamos (es una promesa por eso el then)
+          this.toast.create(options).then(toast => toast.present());
+        },
+        error: err => {
+          console.error(err);
+        }
+      });
+    }
   }
 
 }

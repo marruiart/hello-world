@@ -31,15 +31,12 @@ export class FavoritesService implements FavoritesInterface {
   }
 
   getFav(id: number): Observable<Fav> {
-    return new Observable(observer => {
-      let fav: Fav | undefined = this._favs.value.find(f => f.id == id);
-      observer.next(fav);
-      observer.complete();
-    })
+    return this.httpClient.get<Fav>(`${environment.API_URL}/favs/${id}`);
   }
 
   addFav(userId: number): Observable<Fav> {
-    return new Observable(observer => {
+    let json = {"id": userId};
+    return this.httpClient.post<Fav>(`${environment.API_URL}/favs`, json).pipe(tap(res => {
       let favFound = this._favs.value.find(u => u.id == userId);
       let favs = [...this._favs.value];
       let fav = { id: userId };
@@ -47,25 +44,16 @@ export class FavoritesService implements FavoritesInterface {
         favs.push(fav);
       }
       this._favs.next(favs);
-      observer.next(fav);
-      observer.complete();
-    })
+    }));
   }
 
   deleteFav(userId: number): Observable<Fav> {
-    return new Observable(observer => {
+    return this.httpClient.delete<Fav>(`${environment.API_URL}/favs/${userId}`).pipe(tap(_ => {
       let favs = [...this._favs.value];
       var index = favs.findIndex(fav => userId == fav.id);
-      if (index != -1) {
-        favs.splice(index, 1);
-        observer.next(this._favs.value[index]);
-        this._favs.next(favs);
-      } else {
-        console.warn(`Usuario con id ${userId} no encontrado en favoritos`);
-        observer.error(new UserNotFoundException());
-      }
-      observer.complete();
-    })
+      favs.splice(index, 1);
+      this._favs.next(favs);
+    }));
   }
 
 }
