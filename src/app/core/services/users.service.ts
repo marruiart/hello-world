@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.interface';
 
@@ -17,7 +17,7 @@ export class UserNotFoundException extends Error { }
 
 @Injectable({
   providedIn: 'root' // Lo hace visible en todos los módulos
-  
+
 })
 export class UsersService implements UserInterface {
   private _id: number = 0;
@@ -25,71 +25,54 @@ export class UsersService implements UserInterface {
   public users$: Observable<User[]> = this._users.asObservable();
 
   constructor(
-    private httpClient:HttpClient
+    private httpClient: HttpClient
   ) { }
 
   // Implementamos los métodos de la interfaz
   getAll(): Observable<User[]> {
-    return this.httpClient.get<User[]>(environment.API_URL + "users").pipe(tap(_users=>{
-      this._users.next(_users);
+    return this.httpClient.get<User[]>(`${environment.API_URL}/users`).pipe(tap(users => {
+      this._users.next(users);
     }));
   }
 
   getUser(id: number): Observable<User> {
-    return new Observable(observer => {
-      let user = this._users.value.find(u => u.id == id);
-      if (user) {
-        observer.next(user);
-      } else {
-        observer.error(new UserNotFoundException());
-      }
-      observer.complete();
-    });
+    return this.httpClient.get<User>(`${environment.API_URL}/users/${id}`);
   }
 
   addUser(user: User): Observable<User> {
-    return new Observable(observer => {
-      if (user) {
-        let _users = [...this._users.value];
-        user.id = ++this._id;
-        _users.push(user);
-        this._users.next(_users);
-        observer.next(user);
-      } else {
-        observer.error(new UserNotFoundException());
+    return this.httpClient.post<User>(`${environment.API_URL}/users`, user).pipe(map(buffer => {
+      let json = JSON.parse(JSON.stringify(buffer));
+      let _user: User = {
+        "id": json.id,
+        "name": json.name,
+        "surname": json.surname,
+        "age": json.age
       }
-      observer.complete();
-    });
+      let _users = [...this._users.value];
+      _users.push(_user);
+      this._users.next(_users);
+      return _user;
+    }));
   }
 
   updateUser(user: User): Observable<User> {
-    return new Observable(observer => {
+    let json = JSON.parse(JSON.stringify(user));
+    return this.httpClient.patch<User>(`${environment.API_URL}/users/${user.id}`, json).pipe(tap(res => {
       let _users = [...this._users.value];
       let index = _users.findIndex(u => u.id == user.id);
-      if (index != -1) {
-        _users[index] = user;
-        this._users.next(_users);
-        observer.next(user);
-      } else {
-        observer.error(new UserNotFoundException());
-      }
-      observer.complete();
-    });
+      _users[index] = user;
+      this._users.next(_users);
+    }));
   }
 
   deleteUser(user: User): Observable<User> {
-    let index = this._users.value.findIndex(u => u.id == user.id);
-    return new Observable(observer => {
-      if (index != -1) {
-        let removedUser = this._users.value[index];
-        let _users = [...this._users.value.slice(0, index), ...this._users.value.slice(index + 1)];
-        this._users.next(_users);
-        observer.next(removedUser);
-      } else {
-        observer.error(new UserNotFoundException());
-      }
-      observer.complete();
-    })
+    return this.httpClient.delete<User>(`${environment.API_URL}/users/${user.id}`).pipe(map(_ => {
+      let index = this._users.value.findIndex(u => u.id == user.id);
+      let removedUser = this._users.value[index];
+      let _users = [...this._users.value.slice(0, index), ...this._users.value.slice(index + 1)];
+      this._users.next(_users);
+      return removedUser;
+    }));
   }
 
   deleteAll(): Observable<void> {

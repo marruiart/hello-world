@@ -25,7 +25,7 @@ export class FavoritesService implements FavoritesInterface {
   ) { }
 
   getAll(): Observable<Fav[]> {
-    return this.httpClient.get<Fav[]>(environment.API_URL + "favs").pipe(tap(favs => {
+    return this.httpClient.get<Fav[]>(`${environment.API_URL}/favs`).pipe(tap(favs => {
       this._favs.next(favs);
     }))
   }

@@ -74,7 +74,7 @@ export class HomePage implements OnInit {
         case 'submit': {
           this.users.updateUser(info.data).subscribe(async user => {
             const options: ToastOptions = {
-              message: `Usuario modificado`,
+              message: `Usuario ${user.id} modificado`,
               duration: 1000,
               position: 'bottom',
               color: 'danger',
@@ -166,10 +166,13 @@ export class HomePage implements OnInit {
   }
 
   onDeleteClicked(user: User) {
-    zip(this.users.deleteUser(user), this.favs.deleteFav(user.id)).subscribe({
+    /* zip(this.users.deleteUser(user), this.favs.deleteFav(user.id)).subscribe({ */
+    this.users.deleteUser(user).subscribe({
       next: res => {
-        let user = res[0];
-        console.log(res[1]);
+        let user = res;
+        console.log(user);
+        /* let user = res[0];
+        console.log(res[1]); */
         const options: ToastOptions = {
           message: `Usuario con id ${user.id} eliminado`,
           duration: 1000,
