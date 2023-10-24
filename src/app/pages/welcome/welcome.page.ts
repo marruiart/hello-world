@@ -31,10 +31,15 @@ export class WelcomePage implements OnInit {
     console.log(paramId);
     if (paramId) {
       this.id = parseInt(paramId);
-      zip(this.users.getUser(this.id), this.favs.getFav(this.id)).subscribe(res => {
-        this.user = res[0];
-        this.user.fav = res[1] != undefined;
-        this.loading = false;
+      zip(this.users.getUser(this.id), this.favs.getFav(this.id)).subscribe({
+        next: res => {
+          this.user = res[0];
+          this.user.fav = res[1] != undefined;
+          this.loading = false;
+        },
+        error: err=> {
+          console.error(err);
+        }
       });
     }
   }
@@ -49,7 +54,7 @@ export class WelcomePage implements OnInit {
     obs.subscribe({
       next: user => {
         const options: ToastOptions = {
-          message: `Usuario ${event.fav ? "añadido a" : "eliminado de"} favoritos`,
+          message: `Usuario ${user.id} ${event.fav ? "añadido a" : "eliminado de"} favoritos`,
           duration: 1000,
           position: 'bottom',
           color: 'danger',
@@ -60,7 +65,7 @@ export class WelcomePage implements OnInit {
         this.user.fav = event?.fav ?? false;
       },
       error: err => {
-        console.log(err);
+        console.error(err);
       }
     });
   }

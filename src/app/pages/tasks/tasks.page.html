@@ -1,0 +1,15 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>tasks</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">tasks</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <app-task-info *ngFor="let task of (tasksService.tasks$ | async)" [task]="task"></app-task-info>
+  <ion-loading [isOpen]="loading" message="Cargando..."></ion-loading>
+</ion-content>

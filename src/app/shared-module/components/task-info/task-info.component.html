@@ -1,0 +1,16 @@
+<ion-card button color="dark">
+  <ion-card-header>
+    <ion-card-title>
+      <h2>{{task?.name}}</h2>
+    </ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <h3>Descripción</h3>
+    <p>{{task?.description}}</p>
+    <h3>Responsable</h3>
+    <p>{{user?.name}} {{user?.surname}}</p>
+    <h3>Fecha</h3>
+    <p>{{task?.date | date}}</p>
+  </ion-card-content>
+</ion-card>

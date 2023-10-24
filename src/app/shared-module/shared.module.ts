@@ -8,6 +8,7 @@ import { HighlightDirective } from './directives/highlight.directive';
 import { FavsPipe } from './pipes/favs.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserFormComponent } from './components/user-form/user-form.component';
+import { TaskInfoComponent } from './components/task-info/task-info.component';
 
 
 @NgModule({
@@ -16,6 +17,7 @@ import { UserFormComponent } from './components/user-form/user-form.component';
     UserInfoComponent,
     FavInfoComponent,
     UserFormComponent,
+    TaskInfoComponent,
     //Directives
     HighlightDirective,
     //Pipes
@@ -37,6 +39,7 @@ import { UserFormComponent } from './components/user-form/user-form.component';
     UserInfoComponent,
     UserFormComponent,
     FavInfoComponent,
+    TaskInfoComponent,
     //Directives
     HighlightDirective,
     //Pipes

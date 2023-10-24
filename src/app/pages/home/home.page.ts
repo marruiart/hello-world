@@ -37,7 +37,10 @@ export class HomePage implements OnInit {
     });
   }
 
-
+  navigateToTasks() {
+    this.router.navigate([`/tasks`])
+  }
+  
   undoChanges(id: number, isAddFav: boolean) {
     let obs = isAddFav ? this.favs.addFav(id) : this.favs.deleteFav(id);
     obs.subscribe({
