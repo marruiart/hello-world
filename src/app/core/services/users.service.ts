@@ -30,8 +30,15 @@ export class UsersService implements UserInterface {
 
   // Implementamos los métodos de la interfaz
   getAll(): Observable<User[]> {
-    return this.httpClient.get<User[]>(`${environment.API_URL}/users`).pipe(tap(users => {
-      this._users.next(users);
+    return this.httpClient.get<User[]>(`${environment.API_URL}/users`).pipe(map((users: any[]) => {
+      return users.map((_user: any) => {
+        return {
+          id: _user.id,
+          name: _user.name,
+          surname: _user.surname,
+          age: _user.age
+        }
+      });
     }));
   }
 
@@ -40,6 +47,7 @@ export class UsersService implements UserInterface {
   }
 
   addUser(user: User): Observable<User> {
+    // MAPEO DE LO QUE RECIBIMOS (SI QUEREMOS ADAPTAR A UN TIPO CONCRETO LO QUE SE RECIBE)
     return this.httpClient.post<User>(`${environment.API_URL}/users`, user).pipe(map(buffer => {
       let json = JSON.parse(JSON.stringify(buffer));
       let _user: User = {
