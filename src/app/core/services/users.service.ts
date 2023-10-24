@@ -20,7 +20,6 @@ export class UserNotFoundException extends Error { }
 
 })
 export class UsersService implements UserInterface {
-  private _id: number = 0;
   private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   public users$: Observable<User[]> = this._users.asObservable();
 
@@ -29,53 +28,56 @@ export class UsersService implements UserInterface {
   ) { }
 
   // Implementamos los métodos de la interfaz
-  getAll(): Observable<User[]> {
+
+  public getAll(): Observable<User[]> {
     return this.httpClient.get<User[]>(`${environment.API_URL}/users`).pipe(tap(users => {
       this._users.next(users);
     }));
   }
 
-  getUser(id: number): Observable<User> {
+
+  public getUser(id: number): Observable<User> {
     return this.httpClient.get<User>(`${environment.API_URL}/users/${id}`);
   }
 
-  addUser(user: User): Observable<User> {
-    return this.httpClient.post<User>(`${environment.API_URL}/users`, user).pipe(map(buffer => {
-      let json = JSON.parse(JSON.stringify(buffer));
-      let _user: User = {
-        "id": json.id,
-        "name": json.name,
-        "surname": json.surname,
-        "age": json.age
-      }
-      let _users = [...this._users.value];
-      _users.push(_user);
-      this._users.next(_users);
-      return _user;
-    }));
+  public addUser(user: User): Observable<User> {
+    let _user: any = {
+      name: user.name,
+      surname: user.surname,
+      age: user.age
+    }
+
+    return this.httpClient.post<User>(`${environment.API_URL}/users`, _user).pipe(tap(_ => {
+      this.getAll().subscribe();
+    }))
   }
 
-  updateUser(user: User): Observable<User> {
-    let json = JSON.parse(JSON.stringify(user));
-    return this.httpClient.patch<User>(`${environment.API_URL}/users/${user.id}`, json).pipe(tap(res => {
-      let _users = [...this._users.value];
-      let index = _users.findIndex(u => u.id == user.id);
-      _users[index] = user;
-      this._users.next(_users);
-    }));
-  }
 
-  deleteUser(user: User): Observable<User> {
+  public updateUser(modifiedData: any): Observable<User> {
     return new Observable<User>(obs => {
-      this.httpClient.delete<User>(`${environment.API_URL}/users/${user.id}`).subscribe(_ => {
-          this.getAll().subscribe(_ => {
-            obs.next(user);
+      this.httpClient.patch<User>(`${environment.API_URL}/users/${modifiedData.id}`, modifiedData).subscribe(_ => {
+        this.getAll().subscribe(_ => {
+          this.getUser(modifiedData.id).subscribe(_user => {
+            obs.next(_user);
           })
+        })
       })
     })
   }
 
-  deleteAll(): Observable<void> {
+
+  public deleteUser(user: User): Observable<User> {
+    return new Observable<User>(obs => {
+      this.httpClient.delete<User>(`${environment.API_URL}/users/${user.id}`).subscribe(_ => {
+        this.getAll().subscribe(_ => {
+          obs.next(user);
+        })
+      })
+    })
+  }
+
+
+  public deleteAll(): Observable<void> {
     return new Observable(observer => {
       this._users.next([]);
       observer.next();
