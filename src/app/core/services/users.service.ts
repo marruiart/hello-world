@@ -65,10 +65,14 @@ export class UsersService implements UserInterface {
     }));
   }
 
-  deleteUser(user: User): Observable<any> {
-    return this.httpClient.delete<any>(`${environment.API_URL}/users/${user.id}`).pipe(tap(async _ => {
-      await lastValueFrom(this.getAll());
-    }));
+  deleteUser(user: User): Observable<User> {
+    return new Observable<User>(obs => {
+      this.httpClient.delete<User>(`${environment.API_URL}/users/${user.id}`).subscribe(_ => {
+          this.getAll().subscribe(_ => {
+            obs.next(user);
+          })
+      })
+    })
   }
 
   deleteAll(): Observable<void> {
