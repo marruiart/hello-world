@@ -174,7 +174,7 @@ export class HomePage implements OnInit {
         next: res => {
           let user = res[0];
           const options: ToastOptions = {
-            message: `Usuario con id ${user.id} eliminado`,
+            message: `Usuario eliminado`,
             duration: 1000,
             position: 'bottom',
             color: 'danger',

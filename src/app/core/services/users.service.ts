@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/user.interface';
 
@@ -30,15 +30,8 @@ export class UsersService implements UserInterface {
 
   // Implementamos los métodos de la interfaz
   getAll(): Observable<User[]> {
-    return this.httpClient.get<User[]>(`${environment.API_URL}/users`).pipe(map((users: any[]) => {
-      return users.map((_user: any) => {
-        return {
-          id: _user.id,
-          name: _user.name,
-          surname: _user.surname,
-          age: _user.age
-        }
-      });
+    return this.httpClient.get<User[]>(`${environment.API_URL}/users`).pipe(tap(users => {
+      this._users.next(users);
     }));
   }
 
@@ -47,7 +40,6 @@ export class UsersService implements UserInterface {
   }
 
   addUser(user: User): Observable<User> {
-    // MAPEO DE LO QUE RECIBIMOS (SI QUEREMOS ADAPTAR A UN TIPO CONCRETO LO QUE SE RECIBE)
     return this.httpClient.post<User>(`${environment.API_URL}/users`, user).pipe(map(buffer => {
       let json = JSON.parse(JSON.stringify(buffer));
       let _user: User = {
@@ -73,13 +65,9 @@ export class UsersService implements UserInterface {
     }));
   }
 
-  deleteUser(user: User): Observable<User> {
-    return this.httpClient.delete<User>(`${environment.API_URL}/users/${user.id}`).pipe(map(_ => {
-      let index = this._users.value.findIndex(u => u.id == user.id);
-      let removedUser = this._users.value[index];
-      let _users = [...this._users.value.slice(0, index), ...this._users.value.slice(index + 1)];
-      this._users.next(_users);
-      return removedUser;
+  deleteUser(user: User): Observable<any> {
+    return this.httpClient.delete<any>(`${environment.API_URL}/users/${user.id}`).pipe(tap(async _ => {
+      await lastValueFrom(this.getAll());
     }));
   }
 
