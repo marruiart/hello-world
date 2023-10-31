@@ -9,6 +9,7 @@ import { FavsPipe } from './pipes/favs.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { TaskInfoComponent } from './components/task-info/task-info.component';
+import { PictureSelectableComponent } from './components/picture-selectable/picture-selectable.component';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { TaskInfoComponent } from './components/task-info/task-info.component';
     FavInfoComponent,
     UserFormComponent,
     TaskInfoComponent,
+    PictureSelectableComponent,
     //Directives
     HighlightDirective,
     //Pipes

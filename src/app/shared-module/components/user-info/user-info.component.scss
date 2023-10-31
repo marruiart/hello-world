@@ -4,9 +4,16 @@ ion-card {
   ion-card-header {
     display: flex;
     flex-direction: row;
+    column-gap: 0.5rem;
+
+    ion-avatar {
+      flex-shrink: 0;
+    }
+
     ion-card-title {
       width: 100%;
     }
+
     .card-buttons {
       display: flex;
       width: 30%;
