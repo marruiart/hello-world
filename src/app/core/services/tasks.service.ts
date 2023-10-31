@@ -61,4 +61,9 @@ export class TasksService implements TaskInterface {
     });
   }
 
+  public query(q:string):Observable<ToDo[]>{
+    // Si coincide el tipo de datos que recibo con mi interfaz
+    return this.httpClient.get<ToDo[]>(environment.API_URL+'/tasks?q='+q);
+  }
+
 }

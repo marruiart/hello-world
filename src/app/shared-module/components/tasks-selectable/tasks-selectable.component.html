@@ -1,0 +1,54 @@
+<div id="popover-button">
+  <ion-item [button]="!disabled" [detail]="!disabled">
+    <ion-text slot="start" position="fixed">Tarea:</ion-text>
+    <ion-text *ngIf="!taskSelected && !disabled">
+      Seleccione una tarea
+    </ion-text>
+    <ion-text *ngIf="!taskSelected && disabled">Ninguno</ion-text>
+    <ion-text *ngIf="taskSelected">{{ taskSelected.name }}</ion-text>
+  </ion-item>
+</div>
+
+<ion-popover
+  *ngIf="!disabled"
+  trigger="popover-button"
+  #popover
+  (willPresent)="onLoadUsers()"
+>
+  <ng-template>
+    <ion-content>
+      <ion-list>
+        <ion-item>
+          <ion-input
+            #search
+            placeholder="Buscar"
+            type="text"
+            (ionInput)="onFilter($event)"
+            debounce="200"
+          ></ion-input>
+          <ion-button
+            color="medium"
+            slot="end"
+            fill="clear"
+            (click)="clearSearch(search)"
+            ><ion-icon slot="icon-only" name="close-outline"></ion-icon
+          ></ion-button>
+        </ion-item>
+        <ion-item button (click)="deselect(popover)">
+          <ion-avatar slot="start">
+            <img
+              alt="Silhouette of a person's head"
+              src="https://ionicframework.com/docs/img/demos/avatar.svg"
+            />
+          </ion-avatar>
+          <ion-text>Ninguno</ion-text>
+        </ion-item>
+        <app-tasks-selectable-item
+          (clicked)="onTaskClicked(popover, task)"
+          *ngFor="let task of tasks"
+          [task]="task"
+        ></app-tasks-selectable-item>
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-popover>

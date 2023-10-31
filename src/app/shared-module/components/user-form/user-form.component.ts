@@ -33,7 +33,8 @@ export class UserFormComponent {
       photo: [''],
       name: ['', Validators.required],
       surname: ['', Validators.required],
-      age: [0, [Validators.required, this.validateAge()]]
+      age: [0, [Validators.required, this.validateAge()]],
+      task_id: ['']
     })
   }
 
