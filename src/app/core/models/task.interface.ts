@@ -3,5 +3,5 @@ export interface ToDo {
     name: string,
     description: string,
     date: Date,
-    userId: number
+    user_id: number[]
 }

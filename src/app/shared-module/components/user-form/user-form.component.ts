@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController, Platform } from '@ionic/angular';
+import { ToDo } from 'src/app/core/models/task.interface';
 import { User } from 'src/app/core/models/user.interface';
+import { TasksService } from 'src/app/core/services/tasks.service';
 
 @Component({
   selector: 'app-user-form',
@@ -10,22 +12,36 @@ import { User } from 'src/app/core/models/user.interface';
 })
 export class UserFormComponent {
   public form: FormGroup;
+  public task?: ToDo;
+  private _user: User | null = null;
+
   @Input() mode: 'New' | 'Edit' = 'New';
   @Input() set user(_user: User | null) {
     if (_user) {
+      this._user = _user;
       this.mode = 'Edit';
       this.form.controls['photo'].setValue(_user.photo);
       this.form.controls['id'].setValue(_user.id);
       this.form.controls['name'].setValue(_user.name);
       this.form.controls['surname'].setValue(_user.surname);
       this.form.controls['age'].setValue(_user.age);
+      if (_user.task_id) {
+        this.tasksService.getTask(_user.task_id[0]).subscribe(res => {
+          this.task = res;
+        })
+      }
     }
+  }
+
+  get user(): User | null {
+    return this._user;
   }
 
   constructor(
     private _modal: ModalController,
     private fb: FormBuilder,
-    public platform: Platform
+    public platform: Platform,
+    private tasksService: TasksService
   ) {
     console.log(this.platform);
     this.form = this.fb.group({

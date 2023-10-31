@@ -1,8 +1,10 @@
-import { Component, forwardRef, OnInit } from '@angular/core';
+import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IonInput, IonPopover } from '@ionic/angular';
 import { lastValueFrom } from 'rxjs';
 import { ToDo } from 'src/app/core/models/task.interface';
+import { User } from 'src/app/core/models/user.interface';
+import { AssignmentsService } from 'src/app/core/services/assignments.service';
 import { TasksService } from 'src/app/core/services/tasks.service';
 
 export const TASK_SELECTABLE_VALUE_ACCESSOR: any = {
@@ -20,13 +22,26 @@ export const TASK_SELECTABLE_VALUE_ACCESSOR: any = {
 export class TasksSelectableComponent implements OnInit, ControlValueAccessor {
 
   taskSelected: ToDo | undefined;
-  disabled: boolean = false;
+  disabled: boolean = true;
   tasks: ToDo[] = [];
+  private _user: User | null = null;
+
+  @Input() set user(_user: User | null) {
+    this._user = _user;
+    if (this._user) {
+      this.assignmentsService.getAssigmentByUser(this._user.id).subscribe(tasks => {
+        this.tasksService.getTask(tasks[0].task_id).subscribe(task => {
+          this.taskSelected = task;
+        });
+      });
+    }
+  }
 
   propagateChange = (obj: any) => { }
 
   constructor(
-    private tasksService: TasksService
+    private tasksService: TasksService,
+    private assignmentsService: AssignmentsService
   ) { }
 
   ngOnInit() { }

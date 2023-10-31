@@ -2,7 +2,7 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-button color="primary" fill="clear" (click)="onCancel()">
-        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="arrow-back-outline" />
       </ion-button>
     </ion-buttons>
     <ion-title>
@@ -10,21 +10,21 @@
     </ion-title>
     <ion-buttons slot="end">
       <ion-button color="danger" *ngIf="mode == 'Edit'" (click)="onDelete()">
-        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="trash-outline" />
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
   <form [formGroup]="form" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()">
-    <app-picture-selectable formControlName="photo"></app-picture-selectable>
+    <app-picture-selectable formControlName="photo" />
     <ion-item>
       <ion-input
         label="Nombre"
         labelPlacement="start"
         type="text"
         formControlName="name"
-      ></ion-input>
+      />
     </ion-item>
     <ion-item>
       <ion-input
@@ -32,7 +32,7 @@
         labelPlacement="start"
         type="text"
         formControlName="surname"
-      ></ion-input>
+      />
     </ion-item>
     <ion-item>
       <ion-input
@@ -40,11 +40,9 @@
         labelPlacement="start"
         type="number"
         formControlName="age"
-      ></ion-input>
+      />
     </ion-item>
-    <app-tasks-selectable formControlName="task_id">
-
-    </app-tasks-selectable>
+    <app-tasks-selectable formControlName="task_id" [user]="user" />
   </form>
 </ion-content>
 <ion-footer>
