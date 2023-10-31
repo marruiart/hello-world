@@ -1,16 +1,28 @@
-<ion-card button color="dark">
-  <ion-card-header>
-    <ion-card-title>
-      <h2>{{task?.name}}</h2>
-    </ion-card-title>
-  </ion-card-header>
-
-  <ion-card-content>
-    <h3>Descripción</h3>
-    <p>{{task?.description}}</p>
-    <h3>Responsable</h3>
-    <p>{{user?.name}} {{user?.surname}}</p>
-    <h3>Fecha</h3>
-    <p>{{task?.date | date}}</p>
-  </ion-card-content>
-</ion-card>
+<ion-item-sliding>
+  <ion-item>
+    <ion-label>
+      <h2>{{ task?.name }}</h2>
+      <p>{{ task?.description }}</p>
+      <p>Responsable/s: {{ user?.name }} {{ user?.surname }}</p>
+      <p>Fecha: {{ task?.date | date : "dd MMM YY" }}</p>
+    </ion-label>
+    <ion-icon
+      slot="icon-only"
+      name="arrow-back"
+      aria-hidden="true"
+      slot="end"
+    ></ion-icon>
+  </ion-item>
+  <ion-item-options slot="end">
+    <ion-item-option color="tertiary" (click)="onEditClick($event)">
+      <ion-icon slot="icon-only" name="create"></ion-icon>
+    </ion-item-option>
+    <ion-item-option
+      color="danger"
+      expandable="true"
+      (click)="onDeleteClick($event)"
+    >
+      <ion-icon slot="icon-only" name="trash"></ion-icon>
+    </ion-item-option>
+  </ion-item-options>
+</ion-item-sliding>

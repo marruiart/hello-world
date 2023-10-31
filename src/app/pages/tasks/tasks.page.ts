@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ToDo } from 'src/app/core/models/task.interface';
 import { TasksService } from 'src/app/core/services/tasks.service';
 
 @Component({
@@ -18,6 +19,14 @@ export class TasksPage implements OnInit {
     this.tasksService.getAll().subscribe((_) => {
       this.loading = false;
     });
+  }
+
+  public onEditClicked(task: ToDo) {
+
+  }
+
+  public onDeleteClicked(task: ToDo) {
+    this.tasksService.deleteTask(task).subscribe();
   }
 
 }

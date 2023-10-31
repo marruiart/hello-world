@@ -10,6 +10,13 @@
       <ion-title size="large">tasks</ion-title>
     </ion-toolbar>
   </ion-header>
-  <app-task-info *ngFor="let task of (tasksService.tasks$ | async)" [task]="task"></app-task-info>
+  <ion-list class="tasks_section ion-padding">
+    <app-task-info
+      *ngFor="let task of (tasksService.tasks$ | async)"
+      [task]="task"
+      (onDeleteClicked)="onDeleteClicked(task)"
+      (onEditClicked)="onEditClicked(task)"
+    ></app-task-info>
+  </ion-list>
   <ion-loading [isOpen]="loading" message="Cargando..."></ion-loading>
 </ion-content>
