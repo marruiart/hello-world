@@ -8,6 +8,7 @@ export interface UserInterface {
   // Métodos de la interfaz para el CRUD
   getAll(): Observable<User[]>;
   getUser(id: number): Observable<User>;
+  addUser(user: User): Observable<User>;
   updateUser(user: User): Observable<User>;
   deleteUser(user: User): Observable<User>;
   deleteAll(): Observable<void>
@@ -54,26 +55,16 @@ export class UsersService implements UserInterface {
 
 
   public updateUser(modifiedData: any): Observable<User> {
-    return new Observable<User>(obs => {
-      this.httpClient.patch<User>(`${environment.API_URL}/users/${modifiedData.id}`, modifiedData).subscribe(_ => {
-        this.getAll().subscribe(_ => {
-          this.getUser(modifiedData.id).subscribe(_user => {
-            obs.next(_user);
-          })
-        })
-      })
-    })
+    return this.httpClient.patch<User>(`${environment.API_URL}/users/${modifiedData.id}`, modifiedData).pipe(tap(_ => {
+      this.getAll().subscribe();
+    }));
   }
 
 
   public deleteUser(user: User): Observable<User> {
-    return new Observable<User>(obs => {
-      this.httpClient.delete<User>(`${environment.API_URL}/users/${user.id}`).subscribe(_ => {
-        this.getAll().subscribe(_ => {
-          obs.next(user);
-        })
-      })
-    })
+    return this.httpClient.delete<User>(`${environment.API_URL}/users/${user.id}`).pipe(tap(_ => {
+      this.getAll().subscribe();
+    }));
   }
 
 
