@@ -36,7 +36,7 @@ export class FavoritesService implements FavoritesInterface {
 
   addFav(userId: number): Observable<Fav> {
     let json = {"id": userId};
-    return this.httpClient.post<Fav>(`${environment.API_URL}/favs`, json).pipe(tap(res => {
+    return this.httpClient.post<Fav>(`${environment.API_URL}/favs`, json).pipe(tap(_ => {
       let favFound = this._favs.value.find(u => u.id == userId);
       let favs = [...this._favs.value];
       let fav = { id: userId };

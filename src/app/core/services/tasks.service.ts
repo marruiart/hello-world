@@ -1,11 +1,14 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { ToDo } from '../models/task.interface';
 
 export interface TaskInterface {
   // Métodos de la interfaz para el CRUD
   getAll(): Observable<ToDo[]>;
   getTask(id: number): Observable<ToDo>;
+  addTask(task: ToDo): Observable<ToDo>
   updateTask(task: ToDo): Observable<ToDo>;
   deleteTask(task: ToDo): Observable<ToDo>;
   deleteAll(): Observable<void>
@@ -19,32 +22,43 @@ export class TasksService implements TaskInterface {
   public tasks$: Observable<ToDo[]> = this._tasks.asObservable();
   private _id: number = 0;
 
-  constructor() { }
+  constructor(private httpClient: HttpClient) { }
 
   getAll(): Observable<ToDo[]> {
-    return new Observable(observer => {
-      let tasks: ToDo[] = [
-        { id: 0, name: "Estudiar Angular", description: "Crear un servicio de tareas", date: new Date(), userId: 0 },
-        { id: 1, name: "Perros", description: "Sacar a los perros", date: new Date(), userId: 3 },
-        { id: 2, name: "Prototipado de app", description: "Crear diseño figma", date: new Date(), userId: 1 },
-      ]
-      this._id = 2;
-      this._tasks.next(tasks);
-      observer.next(tasks);
-      observer.complete();
-    })
+    return this.httpClient.get<ToDo[]>(`${environment.API_URL}/tasks`).pipe(tap(res => {
+      this._tasks.next(res);
+    }));
   }
+
   getTask(id: number): Observable<ToDo> {
-    throw new Error('Method not implemented.');
+    return this.httpClient.get<ToDo>(`${environment.API_URL}/tasks/${id}`);
   }
+
+  addTask(task: ToDo): Observable<ToDo> {
+    return this.httpClient.post<ToDo>(`${environment.API_URL}/tasks`, task).pipe(tap(_ => {
+      this.getAll().subscribe();
+    }));
+  }
+
   updateTask(task: ToDo): Observable<ToDo> {
-    throw new Error('Method not implemented.');
+    return this.httpClient.patch<ToDo>(`${environment.API_URL}/tasks/${task.id}`, task).pipe(tap(_ => {
+      this.getAll().subscribe();
+    }));
   }
+
   deleteTask(task: ToDo): Observable<ToDo> {
-    throw new Error('Method not implemented.');
+    return this.httpClient.delete<ToDo>(`${environment.API_URL}/tasks/${task.id}`).pipe(tap(_ => {
+      this.getAll().subscribe();
+    }));
   }
+
   deleteAll(): Observable<void> {
-    throw new Error('Method not implemented.');
+    return new Observable<void>(observable => {
+      this.getAll().subscribe(_tasks => {
+        _tasks.forEach(t => this.deleteTask(t).subscribe());
+      });
+      observable.complete();
+    });
   }
 
 }
