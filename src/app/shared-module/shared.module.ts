@@ -9,7 +9,7 @@ import { FavsPipe } from './pipes/favs.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { TaskInfoComponent } from './components/task-info/task-info.component';
-import { PictureSelectableComponent } from './components/picture-selectable/picture-selectable.component';
+import { AvatarSelectableComponent } from './components/avatar-selectable/avatar-selectable.component';
 import { TasksSelectableComponent } from './components/tasks-selectable/tasks-selectable.component';
 import { TasksSelectableItemComponent } from './components/tasks-selectable-item/tasks-selectable-item.component';
 
@@ -21,7 +21,7 @@ import { TasksSelectableItemComponent } from './components/tasks-selectable-item
     FavInfoComponent,
     UserFormComponent,
     TaskInfoComponent,
-    PictureSelectableComponent,
+    AvatarSelectableComponent,
     TasksSelectableComponent,
     TasksSelectableItemComponent,
     //Directives

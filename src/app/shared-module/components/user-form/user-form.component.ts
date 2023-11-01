@@ -20,7 +20,7 @@ export class UserFormComponent {
     if (_user) {
       this._user = _user;
       this.mode = 'Edit';
-      this.form.controls['photo'].setValue(_user.photo);
+      this.form.controls['avatar'].setValue(_user.avatar);
       this.form.controls['id'].setValue(_user.id);
       this.form.controls['name'].setValue(_user.name);
       this.form.controls['surname'].setValue(_user.surname);
@@ -46,11 +46,11 @@ export class UserFormComponent {
     console.log(this.platform);
     this.form = this.fb.group({
       id: [null],
-      photo: [''],
+      avatar: [''],
       name: ['', Validators.required],
       surname: ['', Validators.required],
       age: [0, [Validators.required, this.validateAge()]],
-      task_id: ['']
+      task_id: [[]]
     })
   }
 

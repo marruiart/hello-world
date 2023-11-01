@@ -5,19 +5,19 @@ import { BehaviorSubject } from 'rxjs';
 
 export const PICTURE_SELECTABLE_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
-  useExisting: forwardRef(() => PictureSelectableComponent),
+  useExisting: forwardRef(() => AvatarSelectableComponent),
   multi: true
 };
 
 @Component({
-  selector: 'app-picture-selectable',
-  templateUrl: './picture-selectable.component.html',
-  styleUrls: ['./picture-selectable.component.scss'],
+  selector: 'app-avatar-selectable',
+  templateUrl: './avatar-selectable.component.html',
+  styleUrls: ['./avatar-selectable.component.scss'],
   providers:[PICTURE_SELECTABLE_VALUE_ACCESSOR]
 })
-export class PictureSelectableComponent implements OnInit, ControlValueAccessor, OnDestroy {
-  private _photo = new BehaviorSubject("");
-  public photo$ = this._photo.asObservable();
+export class AvatarSelectableComponent implements OnInit, ControlValueAccessor, OnDestroy {
+  private _avatar = new BehaviorSubject("");
+  public avatar$ = this._avatar.asObservable();
   isDisabled: boolean = false;
   hasValue: boolean = false;
 
@@ -25,14 +25,14 @@ export class PictureSelectableComponent implements OnInit, ControlValueAccessor,
   }
 
   constructor(
-    private pictureModal: ModalController
+    private avatarModal: ModalController
   ) { }
 
   // Métodos de la interfaz ControlValueAccessor
   writeValue(obj: any): void {
     if (obj) {
       this.hasValue = true;
-      this._photo.next(obj);
+      this._avatar.next(obj);
     }
   }
   registerOnChange(fn: any): void {
@@ -48,24 +48,24 @@ export class PictureSelectableComponent implements OnInit, ControlValueAccessor,
   ngOnInit() { }
 
   ngOnDestroy(): void {
-    this._photo.complete();
+    this._avatar.complete();
   }
 
-  private changePicture(photo: string) {
-    this.hasValue = photo != '';
-    this._photo.next(photo);
-    this.propagateChange(photo);
+  private changeAvatar(avatar: string) {
+    this.hasValue = avatar != '';
+    this._avatar.next(avatar);
+    this.propagateChange(avatar);
   }
 
 
-  public onChangePicture(event: Event, fileLoader: HTMLInputElement) {
+  public onChangeAvatar(event: Event, fileLoader: HTMLInputElement) {
     event.stopPropagation();
     fileLoader.onchange = () => {
       if (fileLoader.files && fileLoader.files?.length > 0) {
         let file = fileLoader.files[0];
         let reader = new FileReader();
         reader.onload = () => {
-          this.changePicture(reader.result as string);
+          this.changeAvatar(reader.result as string);
         };
         reader.onerror = (error) => {
           console.log(error);
@@ -76,12 +76,12 @@ export class PictureSelectableComponent implements OnInit, ControlValueAccessor,
     fileLoader.click();
   }
 
-  onDeletePicture(event: Event) {
+  onDeleteAvatar(event: Event) {
     event.stopPropagation();
-    this.changePicture('');
+    this.changeAvatar('');
   }
 
   close() {
-    this.pictureModal?.dismiss();
+    this.avatarModal?.dismiss();
   }
 }

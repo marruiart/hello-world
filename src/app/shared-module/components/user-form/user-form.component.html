@@ -17,7 +17,7 @@
 </ion-header>
 <ion-content class="ion-padding">
   <form [formGroup]="form" (ngSubmit)="onSubmit()" (keyup.enter)="onSubmit()">
-    <app-picture-selectable formControlName="photo" />
+    <app-avatar-selectable formControlName="avatar" />
     <ion-item>
       <ion-input
         label="Nombre"

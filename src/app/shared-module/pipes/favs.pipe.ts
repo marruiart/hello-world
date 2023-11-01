@@ -16,16 +16,16 @@ export class FavsPipe implements PipeTransform {
     let _users: User[] = [...users ?? []];
     if (favs) {
       _users = _users.map(user => {
-        let tasks: number[] = [];
-        user.task_id?.forEach(t => tasks.push(t));
         return {
           id: user.id,
+          username: user.username,
+          email: user.email,
+          password: user.password,
           name: user.name,
           surname: user.surname,
           age: user.age,
-          photo: user.photo,
+          avatar: user.avatar,
           fav: favs?.reduce((prev, fav) => prev || fav.id == user.id, false),
-          task_id: tasks
         }
       });
     }

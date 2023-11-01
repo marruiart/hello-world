@@ -1,7 +1,7 @@
 <ion-card button color="dark" (click)="onCardClick($event)">
   <ion-card-header>
     <ion-avatar>
-      <img alt="Silhouette of a person's head" [src]="user?.photo" />
+      <img alt="Silhouette of a person's head" [src]="user?.avatar" />
     </ion-avatar>
     <ion-card-title>
       <h2>{{ user?.name }} {{ user?.surname | surnameInitial }}</h2>
