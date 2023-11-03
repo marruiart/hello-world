@@ -25,29 +25,29 @@ export class TasksService implements TaskInterface {
   constructor(private httpClient: HttpClient) { }
 
   getAll(): Observable<ToDo[]> {
-    return this.httpClient.get<ToDo[]>(`${environment.API_URL}/tasks`).pipe(tap(res => {
+    return this.httpClient.get<ToDo[]>(`${environment.JSON_URL}/tasks`).pipe(tap(res => {
       this._tasks.next(res);
     }));
   }
 
   getTask(id: number): Observable<ToDo> {
-    return this.httpClient.get<ToDo>(`${environment.API_URL}/tasks/${id}`);
+    return this.httpClient.get<ToDo>(`${environment.JSON_URL}/tasks/${id}`);
   }
 
   addTask(task: ToDo): Observable<ToDo> {
-    return this.httpClient.post<ToDo>(`${environment.API_URL}/tasks`, task).pipe(tap(_ => {
+    return this.httpClient.post<ToDo>(`${environment.JSON_URL}/tasks`, task).pipe(tap(_ => {
       this.getAll().subscribe();
     }));
   }
 
   updateTask(task: ToDo): Observable<ToDo> {
-    return this.httpClient.patch<ToDo>(`${environment.API_URL}/tasks/${task.id}`, task).pipe(tap(_ => {
+    return this.httpClient.patch<ToDo>(`${environment.JSON_URL}/tasks/${task.id}`, task).pipe(tap(_ => {
       this.getAll().subscribe();
     }));
   }
 
   deleteTask(task: ToDo): Observable<ToDo> {
-    return this.httpClient.delete<ToDo>(`${environment.API_URL}/tasks/${task.id}`).pipe(tap(_ => {
+    return this.httpClient.delete<ToDo>(`${environment.JSON_URL}/tasks/${task.id}`).pipe(tap(_ => {
       this.getAll().subscribe();
     }));
   }
@@ -63,7 +63,7 @@ export class TasksService implements TaskInterface {
 
   public query(q:string):Observable<ToDo[]>{
     // Si coincide el tipo de datos que recibo con mi interfaz
-    return this.httpClient.get<ToDo[]>(environment.API_URL+'/tasks?q='+q);
+    return this.httpClient.get<ToDo[]>(environment.JSON_URL+'/tasks?q='+q);
   }
 
 }

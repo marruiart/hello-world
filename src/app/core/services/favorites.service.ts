@@ -25,18 +25,18 @@ export class FavoritesService implements FavoritesInterface {
   ) { }
 
   getAll(): Observable<Fav[]> {
-    return this.httpClient.get<Fav[]>(`${environment.API_URL}/favs`).pipe(tap(favs => {
+    return this.httpClient.get<Fav[]>(`${environment.JSON_URL}/favs`).pipe(tap(favs => {
       this._favs.next(favs);
     }))
   }
 
   getFav(id: number): Observable<Fav> {
-    return this.httpClient.get<Fav>(`${environment.API_URL}/favs/${id}`);
+    return this.httpClient.get<Fav>(`${environment.JSON_URL}/favs/${id}`);
   }
 
   addFav(userId: number): Observable<Fav> {
     let json = {"id": userId};
-    return this.httpClient.post<Fav>(`${environment.API_URL}/favs`, json).pipe(tap(_ => {
+    return this.httpClient.post<Fav>(`${environment.JSON_URL}/favs`, json).pipe(tap(_ => {
       let favFound = this._favs.value.find(u => u.id == userId);
       let favs = [...this._favs.value];
       let fav = { id: userId };
@@ -48,7 +48,7 @@ export class FavoritesService implements FavoritesInterface {
   }
 
   deleteFav(userId: number): Observable<Fav> {
-    return this.httpClient.delete<Fav>(`${environment.API_URL}/favs/${userId}`).pipe(tap(_ => {
+    return this.httpClient.delete<Fav>(`${environment.JSON_URL}/favs/${userId}`).pipe(tap(_ => {
       let favs = [...this._favs.value];
       var index = favs.findIndex(fav => userId == fav.id);
       favs.splice(index, 1);

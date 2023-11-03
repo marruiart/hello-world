@@ -60,7 +60,7 @@ export class TasksSelectableComponent implements OnInit, ControlValueAccessor {
     this.disabled = isDisabled;
   }
 
-  async onLoadUsers() {
+  async onLoadTasks() {
     this.tasks = await lastValueFrom(this.tasksService.getAll());
   }
 

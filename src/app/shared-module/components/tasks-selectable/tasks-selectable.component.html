@@ -1,19 +1,16 @@
-<div id="popover-button">
-  <ion-item [button]="!disabled" [detail]="!disabled">
-    <ion-text slot="start" position="fixed">Tarea:</ion-text>
-    <ion-text *ngIf="!taskSelected && !disabled">
-      Seleccione una tarea
-    </ion-text>
-    <ion-text *ngIf="!taskSelected && disabled">Ninguno</ion-text>
-    <ion-text *ngIf="taskSelected">{{ taskSelected.name }}</ion-text>
-  </ion-item>
-</div>
+<ion-item id="popover-button" [button]="!disabled" [detail]="!disabled">
+  <ion-text slot="start" position="fixed"> Tarea: </ion-text>
+  <!-- Mostrar la selección -->
+  <ion-text *ngIf="!taskSelected && !disabled"> Seleccione una tarea </ion-text>
+  <ion-text *ngIf="!taskSelected && disabled"> Ninguno </ion-text>
+  <ion-text *ngIf="taskSelected"> {{ taskSelected.name }} </ion-text>
+</ion-item>
 
 <ion-popover
   *ngIf="!disabled"
   trigger="popover-button"
   #popover
-  (willPresent)="onLoadUsers()"
+  (willPresent)="onLoadTasks()"
 >
   <ng-template>
     <ion-content>
@@ -25,23 +22,26 @@
             type="text"
             (ionInput)="onFilter($event)"
             debounce="200"
-          ></ion-input>
+          />
+
           <ion-button
             color="medium"
             slot="end"
             fill="clear"
             (click)="clearSearch(search)"
-            ><ion-icon slot="icon-only" name="close-outline"></ion-icon
-          ></ion-button>
+          >
+            <ion-icon slot="icon-only" name="close-outline" />
+          </ion-button>
         </ion-item>
+
         <ion-item button (click)="deselect(popover)">
           <ion-text>Ninguno</ion-text>
         </ion-item>
         <app-tasks-selectable-item
-          (clicked)="onTaskClicked(popover, task)"
+          (clicked)="onTaskClicked(popover, $event)"
           *ngFor="let task of tasks"
           [task]="task"
-        ></app-tasks-selectable-item>
+        />
       </ion-list>
     </ion-content>
   </ng-template>

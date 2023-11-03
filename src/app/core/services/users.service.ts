@@ -31,14 +31,14 @@ export class UsersService implements UserInterface {
   // Implementamos los métodos de la interfaz
 
   public getAll(): Observable<User[]> {
-    return this.httpClient.get<User[]>(`${environment.API_URL}/users`).pipe(tap(users => {
+    return this.httpClient.get<User[]>(`${environment.JSON_URL}/users`).pipe(tap(users => {
       this._users.next(users);
     }));
   }
 
 
   public getUser(id: number): Observable<User> {
-    return this.httpClient.get<User>(`${environment.API_URL}/users/${id}`);
+    return this.httpClient.get<User>(`${environment.JSON_URL}/users/${id}`);
   }
 
   public addUser(user: User): Observable<User> {
@@ -48,21 +48,21 @@ export class UsersService implements UserInterface {
       age: user.age
     }
 
-    return this.httpClient.post<User>(`${environment.API_URL}/users`, _user).pipe(tap(_ => {
+    return this.httpClient.post<User>(`${environment.JSON_URL}/users`, _user).pipe(tap(_ => {
       this.getAll().subscribe();
     }))
   }
 
 
   public updateUser(modifiedData: any): Observable<User> {
-    return this.httpClient.patch<User>(`${environment.API_URL}/users/${modifiedData.id}`, modifiedData).pipe(tap(_ => {
+    return this.httpClient.patch<User>(`${environment.JSON_URL}/users/${modifiedData.id}`, modifiedData).pipe(tap(_ => {
       this.getAll().subscribe();
     }));
   }
 
 
   public deleteUser(user: User): Observable<User> {
-    return this.httpClient.delete<User>(`${environment.API_URL}/users/${user.id}`).pipe(tap(_ => {
+    return this.httpClient.delete<User>(`${environment.JSON_URL}/users/${user.id}`).pipe(tap(_ => {
       this.getAll().subscribe();
     }));
   }
