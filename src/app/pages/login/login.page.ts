@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from 'src/app/core/models/auth.interface';
 import { JwtService } from 'src/app/core/services/jwt.service';
+import { StorageService } from 'src/app/core/services/storage.service';
 import { LoginErrorException, UsersService } from 'src/app/core/services/users.service';
 
 @Component({
@@ -18,6 +19,7 @@ export class LoginPage implements OnInit {
     private fb: FormBuilder,
     private userService: UsersService,
     private jwtService: JwtService,
+    private storageService: StorageService,
     private router: Router
   ) {
     this.login = this.fb.group({
@@ -35,12 +37,13 @@ export class LoginPage implements OnInit {
   public onSubmit() {
     let obs$ = this.userService.login(this.login.value.identifier, this.login.value.password);
     obs$.subscribe(
-      res => {
+      async res => {
         if (res instanceof LoginErrorException) {
           this.errMsg = res.message;
         } else {
           this.jwtService.setJwt((res as Auth).jwt);
-          this.router.navigate([`/home`])
+          await this.storageService.add((res as Auth).jwt);
+          this.router.navigate(['/home'])
         }
       });
   }
