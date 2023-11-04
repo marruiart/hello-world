@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>signup</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="login" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-input
+        type="email"
+        label="Email: "
+        placeholder="ej. email@gmail.com"
+        formControlName="identifier"
+      />
+    </ion-item>
+    <ion-item>
+      <ion-input
+        type="password"
+        label="Contraseña: "
+        formControlName="password"
+      />
+    </ion-item>
+    <p>{{ errMsg }}</p>
+    <ion-button
+      type="submit"
+      shape="round"
+      [disabled]="!login.dirty || !login.valid"
+    >
+      Aceptar
+    </ion-button>
+  </form>
+</ion-content>

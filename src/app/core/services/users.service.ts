@@ -1,12 +1,11 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, lastValueFrom, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Auth } from '../models/auth.interface';
 import { UserLogin, User } from '../models/user.interface';
 import { ApiService } from './api.service';
-import { JwtService } from './jwt.service';
 
+export class LoginErrorException extends Error { }
 export class UserNotFoundException extends Error { }
 
 let mapUser = (res: any) => {
@@ -39,10 +38,9 @@ export class UsersService extends ApiService {
       "identifier": email,
       "password": password
     }
-    this.httpClient.post<Auth>(`${environment.API_URL}/api/auth/local`, body).subscribe(res => {
-      this.jwtService.setJwt(res.jwt);
-      return res;
-    });
+    return this.httpClient.post<Auth>(`${environment.API_URL}/api/auth/local`, body).pipe(
+      catchError(_ => of(new LoginErrorException("El nombre de usuario o contraseña es incorrecto")))
+    );
   }
 
   logout() {
