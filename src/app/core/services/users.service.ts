@@ -2,79 +2,154 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, lastValueFrom, map, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { User } from '../models/user.interface';
-
-export interface UserInterface {
-  // Métodos de la interfaz para el CRUD
-  getAll(): Observable<User[]>;
-  getUser(id: number): Observable<User>;
-  addUser(user: User): Observable<User>;
-  updateUser(user: User): Observable<User>;
-  deleteUser(user: User): Observable<User>;
-  deleteAll(): Observable<void>
-}
+import { Auth } from '../models/auth.interface';
+import { UserLogin, User } from '../models/user.interface';
+import { ApiService } from './api.service';
+import { JwtService } from './jwt.service';
 
 export class UserNotFoundException extends Error { }
 
+let mapUser = (res: any) => {
+  return {
+    id: res.data.id,
+    avatar: res.data.attributes.avatar ?? undefined,
+    nickname: res.data.attributes.nickname,
+    name: res.data.attributes.name,
+    surname: res.data.attributes.surname,
+    age: res.data.attributes.age,
+    fav: res.data.attributes.fav,
+    user_id: res.data.attributes.user_id?.data.id
+  }
+}
+
 @Injectable({
   providedIn: 'root' // Lo hace visible en todos los módulos
-
 })
-export class UsersService implements UserInterface {
+export class UsersService extends ApiService {
   private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   public users$: Observable<User[]> = this._users.asObservable();
+  public jwt: string = "";
 
-  constructor(
-    private httpClient: HttpClient
-  ) { }
-
-  // Implementamos los métodos de la interfaz
-
-  public getAll(): Observable<User[]> {
-    return this.httpClient.get<User[]>(`${environment.JSON_URL}/users`).pipe(tap(users => {
-      this._users.next(users);
-    }));
+  constructor() {
+    super("extended-users");
   }
 
-
-  public getUser(id: number): Observable<User> {
-    return this.httpClient.get<User>(`${environment.JSON_URL}/users/${id}`);
-  }
-
-  public addUser(user: User): Observable<User> {
-    let _user: any = {
-      name: user.name,
-      surname: user.surname,
-      age: user.age
+  login(email: string, password: string) {
+    let body = {
+      "identifier": email,
+      "password": password
     }
-
-    return this.httpClient.post<User>(`${environment.JSON_URL}/users`, _user).pipe(tap(_ => {
-      this.getAll().subscribe();
-    }))
-  }
-
-
-  public updateUser(modifiedData: any): Observable<User> {
-    return this.httpClient.patch<User>(`${environment.JSON_URL}/users/${modifiedData.id}`, modifiedData).pipe(tap(_ => {
-      this.getAll().subscribe();
-    }));
-  }
-
-
-  public deleteUser(user: User): Observable<User> {
-    return this.httpClient.delete<User>(`${environment.JSON_URL}/users/${user.id}`).pipe(tap(_ => {
-      this.getAll().subscribe();
-    }));
-  }
-
-
-  public deleteAll(): Observable<void> {
-    return new Observable(observer => {
-      this._users.next([]);
-      observer.next();
-      observer.complete()
+    this.httpClient.post<Auth>(`${environment.API_URL}/api/auth/local`, body).subscribe(res => {
+      this.jwtService.setJwt(res.jwt);
+      return res;
     });
   }
 
+  logout() {
+    this.jwtService.setJwt("");
+  }
+
+  signup(username: string, email: string, password: string) {
+    let body = {
+      username: username,
+      email: email,
+      password: password
+    }
+    this.httpClient.post(`${environment.API_URL}/api/auth/local/register`, body).subscribe({
+      next: res => {
+        console.log(res);
+      },
+      error: err => {
+        console.error(err);
+      }
+    });
+  }
+
+  public changePassword(oldPasswd: string, newPasswd: string) {
+    let passwd = {
+      currentPassword: oldPasswd,
+      password: newPasswd,
+      passwordConfirmation: newPasswd
+    }
+    return this.httpClient.post<any>(`${environment.API_URL}/api/auth/change-password`, passwd, this._options);
+  }
+
+  public getMe(): Observable<UserLogin> {
+    return this.httpClient.get<any>(`${environment.JSON_URL}/users/me`).pipe(map(res => {
+      let user: UserLogin = {
+        id: res.id,
+        username: res.username,
+        email: res.email
+      }
+      return user;
+    }));
+  }
+
+  public getAllUsers(): Observable<User[]> {
+    return super.getAll<User[]>("users", (res: any) => {
+      return Array.from(res.data).reduce((prev: User[], user: any): User[] => {
+        let _user: User = {
+          id: user.id,
+          avatar: user.attributes.avatar ?? undefined,
+          nickname: user.attributes.nickname,
+          name: user.attributes.name,
+          surname: user.attributes.surname,
+          age: user.attributes.age,
+          fav: user.attributes.fav,
+          user_id: user.attributes.user_id?.data.id
+        }
+        prev.push(_user);
+        return prev;
+      }, []);
+    }).pipe(tap(res => {
+      this._users.next(res);
+    }));
+  }
+
+  public getUser(id: number): Observable<User> {
+    return super.get<User>(id, mapUser);
+  }
+
+  public addUser(user: User): Observable<User> {
+    let body: any = {
+      data: {
+        avatar: user.avatar ?? null,
+        nickname: user.nickname,
+        name: user.name,
+        surname: user.surname,
+        age: user.age ?? null,
+        fav: user.fav ?? false,
+        user_id: user.user_id
+      }
+    }
+    return super.add<User>(body, mapUser).pipe(tap(_ => {
+      this.getAllUsers().subscribe();
+    }));
+  }
+
+
+  public updateUser(id: number, user: User): Observable<User> {
+    let body: any = {
+      data: {
+        avatar: user.avatar ?? null,
+        nickname: user.nickname,
+        name: user.name,
+        surname: user.surname,
+        age: user.age ?? null,
+        fav: user.fav ?? false,
+        user_id: user.user_id
+      }
+    }
+    return super.update<User>(id, body, mapUser).pipe(tap(_ => {
+      this.getAllUsers().subscribe();
+    }));;
+  }
+
+
+  public deleteUser(id: number): Observable<User> {
+    return super.delete<User>(id, mapUser).pipe(tap(_ => {
+      this.getAllUsers().subscribe();
+    }));;
+  }
 
 }

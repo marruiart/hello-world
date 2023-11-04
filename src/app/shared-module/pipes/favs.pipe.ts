@@ -18,15 +18,15 @@ export class FavsPipe implements PipeTransform {
       _users = _users.map(user => {
         return {
           id: user.id,
-          username: user.username,
-          email: user.email,
-          password: user.password,
+          avatar: user.avatar,
+          nickname: user.nickname,
           name: user.name,
           surname: user.surname,
           age: user.age,
-          avatar: user.avatar,
           fav: favs?.reduce((prev, fav) => prev || fav.id == user.id, false),
+          user_id: user.user_id
         }
+
       });
     }
     return _users;

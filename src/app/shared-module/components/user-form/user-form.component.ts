@@ -25,11 +25,6 @@ export class UserFormComponent {
       this.form.controls['name'].setValue(_user.name);
       this.form.controls['surname'].setValue(_user.surname);
       this.form.controls['age'].setValue(_user.age);
-      if (_user.task_id) {
-        this.tasksService.getTask(_user.task_id[0]).subscribe(res => {
-          this.task = res;
-        })
-      }
     }
   }
 

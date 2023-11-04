@@ -71,7 +71,7 @@ export class WelcomePage implements OnInit {
   }
 
   onDeleteClicked(user: User) {
-    zip(this.users.deleteUser(user), this.favs.deleteFav(user.id)).subscribe({
+    zip(this.users.deleteUser(user.id), this.favs.deleteFav(user.id)).subscribe({
       next: res => {
         let user = res[0];
         const options: ToastOptions = {

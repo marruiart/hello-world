@@ -27,7 +27,7 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    zip(this.users.getAll(), this.favs.getAll()).subscribe({
+    zip(this.users.getAllUsers(), this.favs.getAll()).subscribe({
       next: res => {
         this.loading = false;
       },
@@ -75,7 +75,7 @@ export class HomePage implements OnInit {
     let onDismiss = (info: any) => {
       switch (info.role) {
         case 'submit': {
-          this.users.updateUser(info.data).subscribe(async user => {
+          this.users.updateUser(info.data.id, info.data).subscribe(async user => {
             const options: ToastOptions = {
               message: `Usuario ${user.id} modificado`,
               duration: 1000,
@@ -170,7 +170,7 @@ export class HomePage implements OnInit {
 
   onDeleteClicked(user: User) {
     if (user.fav) {
-      zip(this.users.deleteUser(user), this.favs.deleteFav(user.id)).subscribe({
+      zip(this.users.deleteUser(user.id), this.favs.deleteFav(user.id)).subscribe({
         next: res => {
           let user = res[0];
           const options: ToastOptions = {
@@ -189,7 +189,7 @@ export class HomePage implements OnInit {
         }
       });
     } else {
-      this.users.deleteUser(user).subscribe({
+      this.users.deleteUser(user.id).subscribe({
         next: user => {
           const options: ToastOptions = {
             message: `Usuario con id ${user.id} eliminado`,
