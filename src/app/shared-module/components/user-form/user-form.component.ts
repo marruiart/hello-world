@@ -3,7 +3,6 @@ import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/fo
 import { ModalController, Platform } from '@ionic/angular';
 import { ToDo } from 'src/app/core/models/task.interface';
 import { User } from 'src/app/core/models/user.interface';
-import { TasksService } from 'src/app/core/services/tasks.service';
 
 @Component({
   selector: 'app-user-form',
@@ -20,8 +19,9 @@ export class UserFormComponent {
     if (_user) {
       this._user = _user;
       this.mode = 'Edit';
-      this.form.controls['avatar'].setValue(_user.avatar);
+      /*this.form.controls['avatar'].setValue(_user.avatar);*/
       this.form.controls['id'].setValue(_user.id);
+      this.form.controls['nickname'].setValue(_user.nickname);
       this.form.controls['name'].setValue(_user.name);
       this.form.controls['surname'].setValue(_user.surname);
       this.form.controls['age'].setValue(_user.age);
@@ -36,15 +36,15 @@ export class UserFormComponent {
     private _modal: ModalController,
     private fb: FormBuilder,
     public platform: Platform,
-    private tasksService: TasksService
   ) {
     console.log(this.platform);
     this.form = this.fb.group({
       id: [null],
       avatar: [''],
+      nickname: ['', Validators.required],
       name: ['', Validators.required],
       surname: ['', Validators.required],
-      age: [0, [Validators.required, this.validateAge()]],
+      age: ['', Validators.required],
       task_id: [[]]
     })
   }
