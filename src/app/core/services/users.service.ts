@@ -17,8 +17,27 @@ let mapUser = (res: any) => {
     surname: res.data.attributes.surname,
     age: res.data.attributes.age,
     fav: res.data.attributes.fav,
-    user_id: res.data.attributes.user_id?.data.id
+    user_id: res.data.attributes.user_id?.data.id,
+    assignments: res.data.attributes.assignments?.data
   }
+}
+
+let mapUsers = (res: any) => {
+  return Array.from(res.data).reduce((prev: User[], userRes: any): User[] => {
+    let _user: User = {
+      id: userRes.id,
+      avatar: userRes.attributes.avatar ?? undefined,
+      nickname: userRes.attributes.nickname,
+      name: userRes.attributes.name,
+      surname: userRes.attributes.surname,
+      age: userRes.attributes.age,
+      fav: userRes.attributes.fav,
+      user_id: userRes.attributes.user_id?.data.id,
+      assignments: userRes.attributes.assignments?.data
+    }
+    prev.push(_user);
+    return prev;
+  }, []);
 }
 
 @Injectable({
@@ -28,6 +47,23 @@ export class UsersService extends ApiService {
   private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   public users$: Observable<User[]> = this._users.asObservable();
   public jwt: string = "";
+  private queries: { name: string, option: any }[] = [
+    { name: "populate", option: "user_id,assignments.task" }
+  ]
+  private body: any = (user: User) => {
+    return {
+      data: {
+        avatar: user.avatar ?? null,
+        nickname: user.nickname,
+        name: user.name,
+        surname: user.surname,
+        age: user.age ?? null,
+        fav: user.fav ?? false,
+        user_id: user.user_id,
+        assignments: user.assignments
+      }
+    }
+  }
 
   constructor() {
     super("extended-users");
@@ -84,68 +120,31 @@ export class UsersService extends ApiService {
   }
 
   public getAllUsers(): Observable<User[]> {
-    return super.getAll<User[]>("users", (res: any) => {
-      return Array.from(res.data).reduce((prev: User[], user: any): User[] => {
-        let _user: User = {
-          id: user.id,
-          avatar: user.attributes.avatar ?? undefined,
-          nickname: user.attributes.nickname,
-          name: user.attributes.name,
-          surname: user.attributes.surname,
-          age: user.attributes.age,
-          fav: user.attributes.fav,
-          user_id: user.attributes.user_id?.data.id
-        }
-        prev.push(_user);
-        return prev;
-      }, []);
-    }).pipe(tap(res => {
+    return this.getAll<User[]>(this.queries, mapUsers).pipe(tap(res => {
       this._users.next(res);
     }));
   }
 
   public getUser(id: number): Observable<User> {
-    return super.get<User>(id, mapUser);
+    return this.get<User>(id, this.queries, mapUser);
   }
 
   public addUser(user: User): Observable<User> {
-    let body: any = {
-      data: {
-        avatar: user.avatar ?? null,
-        nickname: user.nickname,
-        name: user.name,
-        surname: user.surname,
-        age: user.age ?? null,
-        fav: user.fav ?? false,
-        user_id: user.user_id
-      }
-    }
-    return super.add<User>(body, mapUser).pipe(tap(_ => {
+    return this.add<User>(this.body(user), mapUser).pipe(tap(_ => {
       this.getAllUsers().subscribe();
     }));
   }
 
 
-  public updateUser(id: number, user: User): Observable<User> {
-    let body: any = {
-      data: {
-        avatar: user.avatar ?? null,
-        nickname: user.nickname,
-        name: user.name,
-        surname: user.surname,
-        age: user.age ?? null,
-        fav: user.fav ?? false,
-        user_id: user.user_id
-      }
-    }
-    return super.update<User>(id, body, mapUser).pipe(tap(_ => {
+  public updateUser(user: User): Observable<User> {
+    return this.update<User>(user.id, this.body(user), mapUser).pipe(tap(_ => {
       this.getAllUsers().subscribe();
-    }));;
+    }));
   }
 
 
   public deleteUser(id: number): Observable<User> {
-    return super.delete<User>(id, mapUser).pipe(tap(_ => {
+    return this.delete<User>(id, mapUser).pipe(tap(_ => {
       this.getAllUsers().subscribe();
     }));;
   }

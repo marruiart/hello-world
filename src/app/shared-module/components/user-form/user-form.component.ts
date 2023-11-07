@@ -11,7 +11,7 @@ import { User } from 'src/app/core/models/user.interface';
 })
 export class UserFormComponent {
   public form: FormGroup;
-  public task?: ToDo;
+  private _task: ToDo | null = null;
   private _user: User | null = null;
 
   @Input() mode: 'New' | 'Edit' = 'New';
@@ -28,8 +28,19 @@ export class UserFormComponent {
     }
   }
 
+  @Input() set task(_task: ToDo | null) {
+    if (_task) {
+      this._task = _task;
+      this.form.controls['task'].setValue(_task.id); // ERROR
+    }
+  }
+
   get user(): User | null {
     return this._user;
+  }
+
+  get task(): ToDo | null {
+    return this._task;
   }
 
   constructor(

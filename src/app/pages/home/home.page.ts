@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalController, ToastController, ToastOptions } from '@ionic/angular';
-import { zip } from 'rxjs';
+import { map, zip } from 'rxjs';
+import { ToDo } from 'src/app/core/models/task.interface';
 import { User } from 'src/app/core/models/user.interface';
+import { AssignmentsService } from 'src/app/core/services/assignments.service';
 import { FavoritesService } from 'src/app/core/services/favorites.service';
+import { TasksService } from 'src/app/core/services/tasks.service';
 import { UsersService } from 'src/app/core/services/users.service';
 import { UserFormComponent } from 'src/app/shared-module/components/user-form/user-form.component';
 import { UserInfoFavClicked } from '../../shared-module/components/user-info/user-info-fav-clicked.interface';
@@ -22,7 +25,9 @@ export class HomePage implements OnInit {
     private toast: ToastController,
     public users: UsersService,
     public favs: FavoritesService,
-    public modal: ModalController
+    public modal: ModalController,
+    private assignmentsSvc: AssignmentsService,
+    private tasksSvc: TasksService
   ) { }
 
   ngOnInit(): void {
@@ -40,7 +45,7 @@ export class HomePage implements OnInit {
   navigateToTasks() {
     this.router.navigate([`/tasks`])
   }
-  
+
   undoChanges(id: number, isAddFav: boolean) {
     let obs = isAddFav ? this.favs.addFav(id) : this.favs.deleteFav(id);
     obs.subscribe({
@@ -53,29 +58,41 @@ export class HomePage implements OnInit {
     });
   }
 
-  async presentForm(data: User | null, onDismiss: ((result: any) => void)) {
-    const modal = await this.modal.create({
-      component: UserFormComponent,
-      componentProps: {
-        mode: data ? 'Edit' : 'New',
-        user: data
-      },
-      cssClass: "modal-ful-right-side"
-    });
-    modal.present();
-    modal.onDidDismiss().then(result => {
-      // result recibe el rol del modal y el data
-      if (result && result.data) {
-        onDismiss(result);
+  async presentForm(user: User | null, onDismiss: ((result: any) => void)) {
+    if (user != null) {
+      let _task: ToDo | null = null;
+      if (user.assignments) {
+        let taskData = user.assignments[0]?.attributes.task.data;
+        _task = {
+          id: taskData.id,
+          name: taskData.attributes.name,
+          description: taskData.attributes.description
+        }
       }
-    })
+      const modal = await this.modal.create({
+        component: UserFormComponent,
+        componentProps: {
+          mode: user ? 'Edit' : 'New',
+          user: user,
+          task: _task
+        },
+        cssClass: "modal-ful-right-side"
+      });
+      modal.present();
+      modal.onDidDismiss().then(result => {
+        // result recibe el rol del modal y el data
+        if (result && result.data) {
+          onDismiss(result);
+        }
+      })
+    }
   }
 
   onCardClicked(user: User) {
     let onDismiss = (info: any) => {
       switch (info.role) {
         case 'submit': {
-          this.users.updateUser(info.data.id, info.data).subscribe(async user => {
+          this.users.updateUser(info.data).subscribe(async user => {
             const options: ToastOptions = {
               message: `Usuario ${user.id} modificado`,
               duration: 1000,

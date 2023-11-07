@@ -16,7 +16,7 @@ export class TasksPage implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    this.tasksService.getAll().subscribe((_) => {
+    this.tasksService.getAllTasks().subscribe((_) => {
       this.loading = false;
     });
   }
@@ -26,7 +26,7 @@ export class TasksPage implements OnInit {
   }
 
   public onDeleteClicked(task: ToDo) {
-    this.tasksService.deleteTask(task).subscribe();
+    this.tasksService.deleteTask(task.id).subscribe();
   }
 
 }

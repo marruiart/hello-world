@@ -13,6 +13,7 @@ export interface User {
     age: string,
     fav: boolean
     user_id: number
+    assignments?: any[]
 }
 
 interface Avatar {

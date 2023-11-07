@@ -2,6 +2,7 @@ import { Component, forwardRef, Input, OnInit } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IonInput, IonPopover } from '@ionic/angular';
 import { lastValueFrom } from 'rxjs';
+import { Assignment } from 'src/app/core/models/assignment.interface';
 import { ToDo } from 'src/app/core/models/task.interface';
 import { User } from 'src/app/core/models/user.interface';
 import { AssignmentsService } from 'src/app/core/services/assignments.service';
@@ -29,11 +30,12 @@ export class TasksSelectableComponent implements OnInit, ControlValueAccessor {
   @Input() set user(_user: User | null) {
     this._user = _user;
     if (this._user) {
-      this.assignmentsService.getAssigmentByUser(this._user.id).subscribe(tasks => {
-        this.tasksService.getTask(tasks[0].task_id).subscribe(task => {
-          this.taskSelected = task;
+      this.assignmentsService.getAssigmentsByUser(this._user.id)
+        .subscribe(tasks => {
+          this.tasksService.getTask(tasks[0].task_id).subscribe(task => {
+            this.taskSelected = task;
+          });
         });
-      });
     }
   }
 
@@ -61,7 +63,7 @@ export class TasksSelectableComponent implements OnInit, ControlValueAccessor {
   }
 
   async onLoadTasks() {
-    this.tasks = await lastValueFrom(this.tasksService.getAll());
+    this.tasks = await lastValueFrom(this.tasksService.getAllTasks());
   }
 
   private async selectTask(id: number | undefined, propagate: boolean = false) {
@@ -70,8 +72,8 @@ export class TasksSelectableComponent implements OnInit, ControlValueAccessor {
     } else {
       this.taskSelected = undefined;
     }
-    if (propagate && this.taskSelected) {
-      this.propagateChange(this.taskSelected.id);
+    if (propagate) {
+      this.propagateChange(this.taskSelected?.id);
     }
   }
 
