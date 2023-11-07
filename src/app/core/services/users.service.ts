@@ -41,9 +41,10 @@ let mapUsers = (res: any) => {
 }
 
 @Injectable({
-  providedIn: 'root' // Lo hace visible en todos los módulos
+  providedIn: 'root'
 })
 export class UsersService extends ApiService {
+  private path: string = "extended-users";
   private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   public users$: Observable<User[]> = this._users.asObservable();
   public jwt: string = "";
@@ -63,10 +64,6 @@ export class UsersService extends ApiService {
         assignments: user.assignments
       }
     }
-  }
-
-  constructor() {
-    super("extended-users");
   }
 
   login(email: string, password: string) {
@@ -120,31 +117,31 @@ export class UsersService extends ApiService {
   }
 
   public getAllUsers(): Observable<User[]> {
-    return this.getAll<User[]>(this.queries, mapUsers).pipe(tap(res => {
+    return this.getAll<User[]>(this.path, this.queries, mapUsers).pipe(tap(res => {
       this._users.next(res);
     }));
   }
 
   public getUser(id: number): Observable<User> {
-    return this.get<User>(id, this.queries, mapUser);
+    return this.get<User>(this.path, id, this.queries, mapUser);
   }
 
   public addUser(user: User): Observable<User> {
-    return this.add<User>(this.body(user), mapUser).pipe(tap(_ => {
+    return this.add<User>(this.path, this.body(user), mapUser).pipe(tap(_ => {
       this.getAllUsers().subscribe();
     }));
   }
 
 
   public updateUser(user: User): Observable<User> {
-    return this.update<User>(user.id, this.body(user), mapUser).pipe(tap(_ => {
+    return this.update<User>(this.path, user.id, this.body(user), mapUser).pipe(tap(_ => {
       this.getAllUsers().subscribe();
     }));
   }
 
 
   public deleteUser(id: number): Observable<User> {
-    return this.delete<User>(id, mapUser).pipe(tap(_ => {
+    return this.delete<User>(this.path, id, mapUser).pipe(tap(_ => {
       this.getAllUsers().subscribe();
     }));;
   }

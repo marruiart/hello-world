@@ -25,9 +25,7 @@ export class HomePage implements OnInit {
     private toast: ToastController,
     public users: UsersService,
     public favs: FavoritesService,
-    public modal: ModalController,
-    private assignmentsSvc: AssignmentsService,
-    private tasksSvc: TasksService
+    public modal: ModalController
   ) { }
 
   ngOnInit(): void {
@@ -127,6 +125,7 @@ export class HomePage implements OnInit {
       }
     }
     this.presentForm(user, onDismiss);
+  
   }
 
   onNewUser() {

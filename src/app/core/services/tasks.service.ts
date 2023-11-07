@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -31,6 +30,7 @@ let mapTasks = (res: any) => {
   providedIn: 'root'
 })
 export class TasksService extends ApiService {
+  private path: string = "tasks";
   private _tasks: BehaviorSubject<ToDo[]> = new BehaviorSubject<ToDo[]>([]);
   public tasks$: Observable<ToDo[]> = this._tasks.asObservable();
   private queries: { name: string, option: any }[] = [
@@ -46,36 +46,30 @@ export class TasksService extends ApiService {
     }
   }
 
-  constructor(
-    private http: HttpClient
-  ) {
-    super("tasks")
-  }
-
   getAllTasks(): Observable<ToDo[]> {
-    return this.getAll<ToDo[]>(this.queries, mapTasks).pipe(tap(res => {
+    return this.getAll<ToDo[]>(this.path, this.queries, mapTasks).pipe(tap(res => {
       this._tasks.next(res);
     }));
   }
 
   getTask(id: number): Observable<ToDo> {
-    return this.get<ToDo>(id, this.queries, mapTask);
+    return this.get<ToDo>(this.path, id, this.queries, mapTask);
   }
 
   addTask(task: ToDo): Observable<ToDo> {
-    return this.add<ToDo>(this.body(task), mapTask).pipe(tap(_ => {
+    return this.add<ToDo>(this.path, this.body(task), mapTask).pipe(tap(_ => {
       this.getAllTasks().subscribe();
     }));
   }
 
   updateTask(task: ToDo): Observable<ToDo> {
-    return this.update<ToDo>(task.id, this.body(task), mapTask).pipe(tap(_ => {
+    return this.update<ToDo>(this.path, task.id, this.body(task), mapTask).pipe(tap(_ => {
       this.getAllTasks().subscribe();
     }));
   }
 
   deleteTask(id: number): Observable<ToDo> {
-    return this.delete<ToDo>(id, mapTask).pipe(tap(_ => {
+    return this.delete<ToDo>(this.path, id, mapTask).pipe(tap(_ => {
       this.getAllTasks().subscribe();
     }));
   }

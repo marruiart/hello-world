@@ -15,14 +15,16 @@ export class StorageService extends Dexie {
   }
 
   async add(token: string) {
-    await this.loginAuth.add({ 'id': 0, 'token': token }, 'token')
-      .catch((err) =>
-        console.error(err)
-      )
+    await this.loginAuth.add({ 'id': 0, 'token': token }, 'token').catch((err) =>
+      console.error(err)
+    )
   }
 
   async get() {
-    return await this.loginAuth.get({ id: 0 });
+    return await this.loginAuth.get({ id: 0 })
+      .catch((err) =>
+        console.error(err)
+      );
   }
 
 }

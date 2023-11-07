@@ -31,7 +31,7 @@ export class UserFormComponent {
   @Input() set task(_task: ToDo | null) {
     if (_task) {
       this._task = _task;
-      this.form.controls['task'].setValue(_task.id); // ERROR
+      this.form.controls['task_id'].setValue(this._task.id);
     }
   }
 
@@ -48,7 +48,7 @@ export class UserFormComponent {
     private fb: FormBuilder,
     public platform: Platform,
   ) {
-    console.log(this.platform);
+    //console.log(this.platform);
     this.form = this.fb.group({
       id: [null],
       avatar: [''],
@@ -56,7 +56,7 @@ export class UserFormComponent {
       name: ['', Validators.required],
       surname: ['', Validators.required],
       age: ['', Validators.required],
-      task_id: [[]]
+      task_id: []
     })
   }
 
