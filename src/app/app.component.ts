@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from './core/services/auth/auth.service';
-import { JwtService } from './core/services/jwt.service';
+import { AuthProvider } from './core/services/auth/auth.provider';
+import { JwtService } from './core/services/auth/jwt.service';
 import { StorageService } from './core/services/storage.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class AppComponent {
 
   constructor(
     private router: Router,
-    private authSvc: AuthService
+    private authSvc: AuthProvider
   ) {
     this.init();
   }
