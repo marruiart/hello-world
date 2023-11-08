@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from './core/services/auth/auth.service';
 import { JwtService } from './core/services/jwt.service';
 import { StorageService } from './core/services/storage.service';
 
@@ -11,26 +12,22 @@ import { StorageService } from './core/services/storage.service';
 export class AppComponent {
 
   constructor(
-    private storageService: StorageService,
-    private jwtService: JwtService,
-    private router: Router
+    private router: Router,
+    private authSvc: AuthService
   ) {
     this.init();
   }
 
   private async init() {
-    this.storageService.get().then(
-      res => {
-        if (!res) {
-          this.router.navigate(['/login'])
-        } else {
-          this.jwtService.setJwt(res.token);
-          console.log(`TOKEN: ${JSON.stringify(res.token)}`);
-          this.router.navigate(['/home'])
+    this.authSvc.isLogged$.subscribe({
+      next: isLogged => {
+        if (isLogged) {
+          this.router.navigate(['/home']);
         }
+      },
+      error: err => {
+        console.error(err);
       }
-    ).catch(error => {
-      console.log(error)
     });
   }
 

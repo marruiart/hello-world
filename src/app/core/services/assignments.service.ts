@@ -59,7 +59,8 @@ export class AssignmentsService extends ApiService {
   getAssigmentsByUser(userId: number): Observable<Assignment[]> {
     let _queries = [...this.queries];
     _queries.push({ name: "user_id", option: userId });
-    return this.http.get<Assignment[]>(`${environment.API_URL}/api/assignments${this.stringifyQueries(this.queries)}`, this._options)
+    const _url = `${environment.API_URL}/api/assignments${this.stringifyQueries(this.queries)}`;
+    return this.http.get<Assignment[]>(_url, this.getOptions(_url))
       .pipe(
         map(mapAssignments),
         catchError(err => {
@@ -71,7 +72,8 @@ export class AssignmentsService extends ApiService {
   getAssigmentsByTask(taskId: number): Observable<Assignment[]> {
     let _queries = [...this.queries];
     _queries.push({ name: "task_id", option: taskId });
-    return this.http.get<Assignment[]>(`${environment.API_URL}/api/assignments${this.stringifyQueries(this.queries)}`, this._options)
+    const _url = `${environment.API_URL}/api/assignments${this.stringifyQueries(this.queries)}`;
+    return this.http.get<Assignment[]>(_url, this.getOptions(_url))
       .pipe(
         map(mapAssignments),
         catchError(err => {

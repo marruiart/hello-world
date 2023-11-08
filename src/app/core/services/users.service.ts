@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { Auth } from '../models/auth.interface';
+import { Auth } from '../models/auth/auth.interface';
 import { UserLogin, User } from '../models/user.interface';
 import { ApiService } from './api.service';
 
@@ -66,18 +66,8 @@ export class UsersService extends ApiService {
     }
   }
 
-  login(email: string, password: string) {
-    let body = {
-      "identifier": email,
-      "password": password
-    }
-    return this.httpClient.post<Auth>(`${environment.API_URL}/api/auth/local`, body).pipe(
-      catchError(_ => of(new LoginErrorException("El nombre de usuario o contraseña es incorrecto")))
-    );
-  }
-
   logout() {
-    this.jwtService.setJwt("");
+    this.jwtSvc.saveToken("");
   }
 
   signup(username: string, email: string, password: string) {
@@ -94,15 +84,6 @@ export class UsersService extends ApiService {
         console.error(err);
       }
     });
-  }
-
-  public changePassword(oldPasswd: string, newPasswd: string) {
-    let passwd = {
-      currentPassword: oldPasswd,
-      password: newPasswd,
-      passwordConfirmation: newPasswd
-    }
-    return this.httpClient.post<any>(`${environment.API_URL}/api/auth/change-password`, passwd, this._options);
   }
 
   public getMe(): Observable<UserLogin> {
