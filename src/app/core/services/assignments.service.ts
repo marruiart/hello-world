@@ -36,15 +36,8 @@ export class AssignmentsService extends ApiService {
   private path: string = "assignments";
   private _assignments: BehaviorSubject<Assignment[]> = new BehaviorSubject<Assignment[]>([]);
   public assignments$: Observable<Assignment[]> = this._assignments.asObservable();
-  private queries: { name: string, option: any }[] = [
-    { name: "populate", option: "user,task" }
-  ]
+  private queries: { [query: string]: string } = { "populate": "user,task" };
 
-  constructor(
-    private http: HttpClient
-  ) {
-    super();
-  }
 
   getAllAssignments(): Observable<Assignment[]> {
     return this.getAll<Assignment[]>(this.path, this.queries, mapAssignments).pipe(tap(res => {
@@ -53,14 +46,13 @@ export class AssignmentsService extends ApiService {
   }
 
   getAssignment(id: number): Observable<Assignment> {
-    return this.get<Assignment>(this.path, id, this.queries, mapAssignment);
+    return this.get<Assignment>(this.path, mapAssignment, this.queries, id);
   }
 
   getAssigmentsByUser(userId: number): Observable<Assignment[]> {
-    let _queries = [...this.queries];
-    _queries.push({ name: "user_id", option: userId });
-    const _url = `${environment.API_URL}/api/assignments${this.stringifyQueries(this.queries)}`;
-    return this.http.get<Assignment[]>(_url, this.getOptions(_url))
+    this.queries["user_id"] = `${userId}`;
+    const url = this.getUrl("/api/assignments");
+    return this.http.get<Assignment[]>(url, this.queries, this.getHeader(url))
       .pipe(
         map(mapAssignments),
         catchError(err => {
@@ -70,10 +62,9 @@ export class AssignmentsService extends ApiService {
   }
 
   getAssigmentsByTask(taskId: number): Observable<Assignment[]> {
-    let _queries = [...this.queries];
-    _queries.push({ name: "task_id", option: taskId });
-    const _url = `${environment.API_URL}/api/assignments${this.stringifyQueries(this.queries)}`;
-    return this.http.get<Assignment[]>(_url, this.getOptions(_url))
+    this.queries["task_id"] = `${taskId}`;
+    const url = this.getUrl("/api/assignments");
+    return this.http.get<Assignment[]>(url, this.queries, this.getHeader(url))
       .pipe(
         map(mapAssignments),
         catchError(err => {
@@ -109,7 +100,7 @@ export class AssignmentsService extends ApiService {
   }
 
   deleteAssignment(id: number): Observable<Assignment> {
-    return this.delete<Assignment>(this.path, id, mapAssignment).pipe(tap(_ => {
+    return this.delete<Assignment>(this.path, mapAssignment, id).pipe(tap(_ => {
       this.getAllAssignments().subscribe();
     }));;
   }

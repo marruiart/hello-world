@@ -44,13 +44,12 @@ let mapUsers = (res: any) => {
   providedIn: 'root'
 })
 export class UsersService extends ApiService {
-  private path: string = "extended-users";
+  private path: string = "/api/extended-users";
   private _users: BehaviorSubject<User[]> = new BehaviorSubject<User[]>([]);
   public users$: Observable<User[]> = this._users.asObservable();
   public jwt: string = "";
-  private queries: { name: string, option: any }[] = [
-    { name: "populate", option: "user_id,assignments.task" }
-  ]
+  private queries: { [query: string]: string } = { "populate": "user_id,assignments.task" }
+
   private body: any = (user: User) => {
     return {
       data: {
@@ -70,13 +69,13 @@ export class UsersService extends ApiService {
     this.jwtSvc.saveToken("");
   }
 
-  signup(username: string, email: string, password: string) {
+/*   signup(username: string, email: string, password: string) {
     let body = {
       username: username,
       email: email,
       password: password
     }
-    this.httpClient.post(`${environment.API_URL}/api/auth/local/register`, body).subscribe({
+    this.http.post(`${environment.API_URL}/api/auth/local/register`, body).subscribe({
       next: res => {
         console.log(res);
       },
@@ -87,7 +86,7 @@ export class UsersService extends ApiService {
   }
 
   public getMe(): Observable<UserLogin> {
-    return this.httpClient.get<any>(`${environment.JSON_URL}/users/me`).pipe(map(res => {
+    return this.http.get<any>(`${environment.JSON_URL}/users/me`).pipe(map(res => {
       let user: UserLogin = {
         id: res.id,
         username: res.username,
@@ -95,16 +94,16 @@ export class UsersService extends ApiService {
       }
       return user;
     }));
-  }
+  } */
 
   public getAllUsers(): Observable<User[]> {
-    return this.getAll<User[]>(this.path, this.queries, mapUsers).pipe(tap(res => {
+    return this.get<User[]>(this.path, mapUsers, this.queries).pipe(tap(res => {
       this._users.next(res);
     }));
   }
 
   public getUser(id: number): Observable<User> {
-    return this.get<User>(this.path, id, this.queries, mapUser);
+    return this.get<User>(this.path, mapUser, this.queries, id);
   }
 
   public addUser(user: User): Observable<User> {
@@ -122,7 +121,7 @@ export class UsersService extends ApiService {
 
 
   public deleteUser(id: number): Observable<User> {
-    return this.delete<User>(this.path, id, mapUser).pipe(tap(_ => {
+    return this.delete<User>(this.path, mapUser, id).pipe(tap(_ => {
       this.getAllUsers().subscribe();
     }));;
   }

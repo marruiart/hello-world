@@ -3,13 +3,13 @@ import { Observable } from 'rxjs/internal/Observable';
 import { Auth } from '../../models/auth/auth.interface';
 import { UserCredentials } from '../../models/auth/user-credentials.interface';
 import { ApiService } from '../api.service';
-import { JwtService } from '../jwt.service';
-import { AuthService } from './auth.service';
+import { JwtService } from './jwt.service';
+import { AuthProvider } from './auth.provider';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthStrapiService extends AuthService {
+export class AuthStrapiService extends AuthProvider {
 
   constructor(
     private apiSvc: ApiService,

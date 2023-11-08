@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from 'src/app/core/models/auth/auth.interface';
 import { UserCredentials } from 'src/app/core/models/auth/user-credentials.interface';
-import { AuthService } from 'src/app/core/services/auth/auth.service';
-import { JwtService } from 'src/app/core/services/jwt.service';
+import { AuthProvider } from 'src/app/core/services/auth/auth.provider';
+import { JwtService } from 'src/app/core/services/auth/jwt.service';
 import { StorageService } from 'src/app/core/services/storage.service';
 import { LoginErrorException, UsersService } from 'src/app/core/services/users.service';
 
@@ -19,7 +19,7 @@ export class LoginPage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authSvc: AuthService,
+    private authSvc: AuthProvider,
     private router: Router
   ) {
     this.login = this.fb.group({

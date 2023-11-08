@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/internal/Observable';
 @Injectable({
   providedIn: 'root'
 })
-export abstract class AuthService {
+export abstract class AuthProvider {
 
   protected _isLogged = new BehaviorSubject<boolean>(false);
   public isLogged$ = this._isLogged.asObservable();

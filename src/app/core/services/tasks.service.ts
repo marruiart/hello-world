@@ -33,9 +33,7 @@ export class TasksService extends ApiService {
   private path: string = "tasks";
   private _tasks: BehaviorSubject<ToDo[]> = new BehaviorSubject<ToDo[]>([]);
   public tasks$: Observable<ToDo[]> = this._tasks.asObservable();
-  private queries: { name: string, option: any }[] = [
-    { name: "populate", option: "assignments.user" }
-  ]
+  private queries: { [query: string]: string } = { "populate": "assignments.user" };
   private body: any = (task: ToDo) => {
     return {
       data: {
@@ -53,7 +51,7 @@ export class TasksService extends ApiService {
   }
 
   getTask(id: number): Observable<ToDo> {
-    return this.get<ToDo>(this.path, id, this.queries, mapTask);
+    return this.get<ToDo>(this.path, mapTask, this.queries, id);
   }
 
   addTask(task: ToDo): Observable<ToDo> {
@@ -69,13 +67,14 @@ export class TasksService extends ApiService {
   }
 
   deleteTask(id: number): Observable<ToDo> {
-    return this.delete<ToDo>(this.path, id, mapTask).pipe(tap(_ => {
+    return this.delete<ToDo>(this.path, mapTask, id).pipe(tap(_ => {
       this.getAllTasks().subscribe();
     }));
   }
 
   public query(q: string): Observable<ToDo[]> {
-    return this.httpClient.get<ToDo[]>(environment.JSON_URL + '/tasks?q=' + q);
+    const query = { "q": q };
+    return this.http.get<ToDo[]>(environment.JSON_URL + '/tasks', query, {});
   }
 
 }
