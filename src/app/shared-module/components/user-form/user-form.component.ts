@@ -21,6 +21,7 @@ export class UserFormComponent {
       this.mode = 'Edit';
       /*this.form.controls['avatar'].setValue(_user.avatar);*/
       this.form.controls['id'].setValue(_user.id);
+      this.form.controls['user_id'].setValue(_user.user_id);
       this.form.controls['nickname'].setValue(_user.nickname);
       this.form.controls['name'].setValue(_user.name);
       this.form.controls['surname'].setValue(_user.surname);
@@ -51,16 +52,19 @@ export class UserFormComponent {
     //console.log(this.platform);
     this.form = this.fb.group({
       id: [null],
-      avatar: [''],
+      user_id: [null],
       nickname: ['', Validators.required],
+      avatar: [null],
       name: ['', Validators.required],
       surname: ['', Validators.required],
       age: ['', Validators.required],
-      task_id: []
+      task_id: [null]
     })
   }
 
   onSubmit() {
+    let taskId = this.form.value.task_id;
+    this.form.value.task_id = taskId == undefined ? null : taskId;
     this._modal.dismiss(this.form.value, "submit");
   }
 
