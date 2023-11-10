@@ -1,18 +1,15 @@
-export interface UserLogin {
-    id: number,
-    username: string,
-    email: string
+export interface User extends NewUser {
+    id: number
 }
 
-export interface User {
-    id: number,
-    avatar?: Avatar,
+export interface NewUser {
+    user_id: number,
     nickname: string,
-    name: string,
-    surname: string,
-    age: string,
-    fav: boolean
-    user_id: number
+    avatar?: Avatar,
+    name?: string,
+    surname?: string,
+    age?: string,
+    fav?: boolean,
     assignments?: any
 }
 

@@ -1,6 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title> Gestor de usuarios </ion-title>
+    <ion-title> TaskHub </ion-title>
+    <ion-buttons slot="secondary">
+      <ion-button (click)="onProfileClick()">
+        <ion-icon slot="icon-only" name="person-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

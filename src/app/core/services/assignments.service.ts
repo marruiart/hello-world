@@ -46,7 +46,7 @@ export class AssignmentsService extends ApiService {
   }
 
   getAssignment(id: number): Observable<Assignment> {
-    return this.get<Assignment>(this.path, mapAssignment, this.queries, id);
+    return this.get<Assignment>(this.path, id, mapAssignment, this.queries);
   }
 
   getAssigmentsByUser(userId: number): Observable<Assignment[]> {

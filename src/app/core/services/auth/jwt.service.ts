@@ -13,29 +13,33 @@ export class JwtService {
     private storageSvc: StorageService
   ) { }
 
-  public saveToken(jwt: string) {
-    this._jwt = jwt;
-    this.storageSvc.add(jwt)
-      .catch(error => {
-        console.error(error);
-      });
+  public saveToken(jwt: string): Observable<string> {
+    return new Observable<string>(observer => {
+      this.storageSvc.add(jwt)
+        .then(_ => {
+          this._jwt = jwt;
+          observer.next(jwt);
+          observer.complete();
+        })
+        .catch(error => {
+          observer.error(error);
+        });
+    })
   }
 
   public loadToken() {
     return new Observable<string>(observer => {
-      this.storageSvc.get().then(
-        res => {
+      this.storageSvc.get()
+        .then(res => {
           if (res && res.token != '') {
             this._jwt = res.token;
-            console.log(`TOKEN: ${JSON.stringify(res.token)}`);
             observer.next(this._jwt);
             observer.complete();
           }
         }
-      ).catch(error => {
-        observer.error(error);
-        observer.complete();
-      });
+        ).catch(error => {
+          observer.error(error);
+        });
     });
   }
 
@@ -45,7 +49,7 @@ export class JwtService {
 
   public destroyToken() {
     this._jwt = "";
-    return this.saveToken(this._jwt);
+    return this.storageSvc.loginAuth.delete(0);
   }
 
 }

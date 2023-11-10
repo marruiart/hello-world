@@ -1,18 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { UserCredentials } from 'src/app/core/models/auth/user-credentials.interface';
 import { AuthProvider } from 'src/app/core/services/auth/auth.provider';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
+  selector: 'app-register',
+  templateUrl: './register.page.html',
+  styleUrls: ['./register.page.scss'],
 })
-export class LoginPage implements OnDestroy {
-  private _subs: Subscription[] = []
-  public login: FormGroup;
+export class RegisterPage implements OnInit {
+  public register: FormGroup;
   public errMsg: string = "";
 
   constructor(
@@ -20,21 +18,25 @@ export class LoginPage implements OnDestroy {
     private authSvc: AuthProvider,
     private router: Router
   ) {
-    this.login = this.fb.group({
+    this.register = this.fb.group({
       identifier: ['', [
         Validators.required,
         Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")
       ]],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
+      passwordRepeat: ['', Validators.required]
     });
   }
 
-  public onLogin() {
+  ngOnInit() {
+  }
+
+  public onRegister() {
     const credentials: UserCredentials = {
-      username: this.login.value.identifier,
-      password: this.login.value.password
+      username: this.register.value.identifier,
+      password: this.register.value.password
     }
-    let sub = this.authSvc.login(credentials).subscribe({
+    this.authSvc.register(credentials).subscribe({
       next: _ => {
         this.router.navigate(['/home']);
       },
@@ -42,15 +44,5 @@ export class LoginPage implements OnDestroy {
         console.error(err);
       }
     });
-    this._subs.push(sub);
   }
-
-  public onCreateAccount() {
-    this.router.navigate(['/register']);
-  }
-
-  ngOnDestroy(): void {
-    this._subs.forEach(s => s.unsubscribe());
-  }
-
 }

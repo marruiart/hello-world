@@ -49,11 +49,10 @@ export abstract class ApiService {
 
   protected get<T>(
     path: string,
+    id: number,
     callback: ((res: T) => T),
     queries: { [query: string]: string } = {},
-    id: number | null = null
   ): Observable<T> {
-    // TODO añadir /api en el path
 
     const url = this.getUrl(path, id);
     return this.http.get<T>(url, queries, this.getHeader(url))
@@ -66,24 +65,9 @@ export abstract class ApiService {
 
   public post<T>(
     path: string,
-    body: JSON,
+    body: any,
     queries: { [query: string]: string } = {},
     callback: ((res: T) => T) = (res => res)
-  ): Observable<T> {
-
-    const url = this.getUrl(path);
-    return this.http.post<T>(url, body, {}, this.getHeader(url))
-      .pipe(map(callback), catchError(error => {
-        console.log("ERROR add");
-        console.error(error);
-        return of(error);
-      }));
-  }
-
-  protected add<T>(
-    path: string,
-    body: JSON,
-    callback: ((res: T) => T)
   ): Observable<T> {
 
     const url = this.getUrl(path);
@@ -95,10 +79,26 @@ export abstract class ApiService {
       }));
   }
 
+  protected add<T>(
+    path: string,
+    body: any,
+    callback: ((res: T) => T)
+  ): Observable<T> {
+
+    const url = this.getUrl(path);
+    return this.http.post<T>(url, body, this.getHeader(url))
+      .pipe(map(callback), catchError(error => {
+        return new Observable<any>(observer => {
+          observer.error(error);
+          observer.complete();
+        })
+      }));
+  }
+
   protected update<T>(
     path: string,
     id: number,
-    body: JSON,
+    body: any,
     callback: ((res: T) => T)
   ): Observable<T> {
 

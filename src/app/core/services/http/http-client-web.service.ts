@@ -32,13 +32,13 @@ export class HttpClientWebService extends HttpClientProvider {
   /**
    * create http request body
    *
-   * @param jsonBody http request body
+   * @param body http request body
    * @param urlEncoded http request as url encoded content-type
    * @returns http request body
    */
-  private createBody(jsonBody: any, urlEncoded: boolean): any | HttpParams {
+  private createBody(body: any, urlEncoded: boolean): any | HttpParams {
 
-    return urlEncoded ? new HttpParams({ fromObject: jsonBody }) : jsonBody;
+    return urlEncoded ? new HttpParams({ fromObject: body }) : body;
   }
 
   /**
