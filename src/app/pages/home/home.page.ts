@@ -8,7 +8,7 @@ import { AuthProvider } from 'src/app/core/services/auth/auth.provider';
 import { FavoritesService } from 'src/app/core/services/favorites.service';
 import { UsersService } from 'src/app/core/services/users.service';
 import { UserFormComponent } from 'src/app/shared-module/components/user-form/user-form.component';
-import { UserInfoFavClicked } from '../../shared-module/components/user-info/user-info-fav-clicked.interface';
+import { UserInfoFavClicked } from 'src/app/shared-module/components/user-info/user-info-fav-clicked.interface';
 
 
 @Component({
@@ -125,7 +125,6 @@ export class HomePage implements OnInit {
       }
     }
     this.presentForm(user, onDismiss);
-
   }
 
   private mapNewUser = (data: User): NewUser => {
