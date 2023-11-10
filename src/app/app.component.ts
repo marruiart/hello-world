@@ -23,6 +23,8 @@ export class AppComponent {
       next: isLogged => {
         if (isLogged) {
           this.router.navigate(['/home']);
+        } else {
+          this.router.navigate(['/login']);
         }
       },
       error: err => {

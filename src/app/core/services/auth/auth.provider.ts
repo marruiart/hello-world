@@ -12,7 +12,7 @@ export abstract class AuthProvider {
 
   public abstract login(credentials: Object): Observable<any>;
 
-  public abstract register<T>(info: T): Observable<T>;
+  public abstract register(info: Object): Observable<any>;
 
   public abstract logout(): void;
 

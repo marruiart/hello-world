@@ -45,7 +45,7 @@ export class JwtService {
 
   public destroyToken() {
     this._jwt = "";
-    return this.saveToken(this._jwt);
+    return this.storageSvc.loginAuth.delete(0);
   }
 
 }

@@ -65,37 +65,6 @@ export class UsersService extends ApiService {
     }
   }
 
-  logout() {
-    this.jwtSvc.saveToken("");
-  }
-
-/*   signup(username: string, email: string, password: string) {
-    let body = {
-      username: username,
-      email: email,
-      password: password
-    }
-    this.http.post(`${environment.API_URL}/api/auth/local/register`, body).subscribe({
-      next: res => {
-        console.log(res);
-      },
-      error: err => {
-        console.error(err);
-      }
-    });
-  }
-
-  public getMe(): Observable<UserLogin> {
-    return this.http.get<any>(`${environment.JSON_URL}/users/me`).pipe(map(res => {
-      let user: UserLogin = {
-        id: res.id,
-        username: res.username,
-        email: res.email
-      }
-      return user;
-    }));
-  } */
-
   public getAllUsers(): Observable<User[]> {
     return this.get<User[]>(this.path, mapUsers, this.queries).pipe(tap(res => {
       this._users.next(res);

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalController, ToastController, ToastOptions } from '@ionic/angular';
-import { map, zip } from 'rxjs';
+import { zip } from 'rxjs';
 import { ToDo } from 'src/app/core/models/task.interface';
 import { User } from 'src/app/core/models/user.interface';
-import { AssignmentsService } from 'src/app/core/services/assignments.service';
+import { AuthProvider } from 'src/app/core/services/auth/auth.provider';
 import { FavoritesService } from 'src/app/core/services/favorites.service';
-import { TasksService } from 'src/app/core/services/tasks.service';
 import { UsersService } from 'src/app/core/services/users.service';
 import { UserFormComponent } from 'src/app/shared-module/components/user-form/user-form.component';
 import { UserInfoFavClicked } from '../../shared-module/components/user-info/user-info-fav-clicked.interface';
@@ -25,7 +24,8 @@ export class HomePage implements OnInit {
     private toast: ToastController,
     public users: UsersService,
     public favs: FavoritesService,
-    public modal: ModalController
+    public modal: ModalController,
+    private authSrv: AuthProvider
   ) { }
 
   ngOnInit(): void {
@@ -57,8 +57,8 @@ export class HomePage implements OnInit {
   }
 
   async presentForm(user: User | null, onDismiss: ((result: any) => void)) {
+    let _task: ToDo | undefined = undefined;
     if (user != null) {
-      let _task: ToDo | null = null;
       if (user.assignments) {
         let taskData = user.assignments[0]?.attributes.task.data;
         _task = {
@@ -67,23 +67,23 @@ export class HomePage implements OnInit {
           description: taskData.attributes.description
         }
       }
-      const modal = await this.modal.create({
-        component: UserFormComponent,
-        componentProps: {
-          mode: user ? 'Edit' : 'New',
-          user: user,
-          task: _task
-        },
-        cssClass: "modal-ful-right-side"
-      });
-      modal.present();
-      modal.onDidDismiss().then(result => {
-        // result recibe el rol del modal y el data
-        if (result && result.data) {
-          onDismiss(result);
-        }
-      })
     }
+    const modal = await this.modal.create({
+      component: UserFormComponent,
+      componentProps: {
+        mode: user ? 'Edit' : 'New',
+        user: user,
+        task: _task
+      },
+      cssClass: "modal-ful-right-side"
+    });
+    modal.present();
+    modal.onDidDismiss().then(result => {
+      if (result && result.data) {
+        onDismiss(result);
+      }
+    })
+
   }
 
   onCardClicked(user: User) {
@@ -125,14 +125,14 @@ export class HomePage implements OnInit {
       }
     }
     this.presentForm(user, onDismiss);
-  
+
   }
 
   onNewUser() {
     let onDismiss = (info: any) => {
       switch (info.role) {
         case 'submit': {
-          this.users.addUser(info.data).subscribe(async user => {
+          this.users.addUser(info.data).subscribe(async _ => {
             const options: ToastOptions = {
               message: `Usuario creado`,
               duration: 1000,
@@ -223,6 +223,10 @@ export class HomePage implements OnInit {
         }
       });
     }
+  }
+
+  onProfileClick() {
+    this.authSrv.logout();
   }
 
 }

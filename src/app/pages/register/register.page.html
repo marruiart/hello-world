@@ -1,6 +1,6 @@
 <ion-content [fullscreen]="true">
   <div class="flex-center">
-    <form [formGroup]="login" (ngSubmit)="onLogin()">
+    <form [formGroup]="register" (ngSubmit)="onRegister()">
       <ion-item>
         <ion-input
           type="email"
@@ -16,14 +16,20 @@
           formControlName="password"
         />
       </ion-item>
+      <ion-item>
+        <ion-input
+          type="password"
+          label="Repetir contraseña: "
+          formControlName="passwordRepeat"
+        />
+      </ion-item>
       <div>
         <ion-text color="danger">{{ errMsg }}</ion-text>
       </div>
-      <ion-button (click)="onCreateAccount()" class="create" fill="clear">Crear una cuenta</ion-button>
       <ion-button
         type="submit"
         shape="round"
-        [disabled]="!login.dirty || !login.valid"
+        [disabled]="!register.dirty || !register.valid"
       >
         Aceptar
       </ion-button>

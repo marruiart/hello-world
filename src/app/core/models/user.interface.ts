@@ -10,8 +10,8 @@ export interface User {
     nickname: string,
     name: string,
     surname: string,
-    age: string,
-    fav: boolean
+    age?: string,
+    fav?: boolean
     user_id: number
     assignments?: any
 }

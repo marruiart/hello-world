@@ -51,7 +51,7 @@ export class UserFormComponent {
     //console.log(this.platform);
     this.form = this.fb.group({
       id: [null],
-      avatar: [''],
+      avatar: [null],
       nickname: ['', Validators.required],
       name: ['', Validators.required],
       surname: ['', Validators.required],
@@ -61,6 +61,8 @@ export class UserFormComponent {
   }
 
   onSubmit() {
+    let taskId = this.form.value.task_id;
+    this.form.value.task_id = taskId == undefined ? null : taskId;
     this._modal.dismiss(this.form.value, "submit");
   }
 
