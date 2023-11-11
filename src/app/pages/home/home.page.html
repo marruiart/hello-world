@@ -15,13 +15,6 @@
       <ion-title>Mis favoritos</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-content class="ion-padding">
-    <app-fav-info
-      *ngFor="let fav of (favs.favs$ | async)"
-      [id]="fav.id"
-      (onFavRemoved)="onFavClicked(fav.id, $event)"
-    ></app-fav-info>
-  </ion-content>
 </ion-menu>
 
 <ion-content [fullscreen]="true" id="main-content">
@@ -45,9 +38,8 @@
     <main class="cards-section" *ngIf="!loading">
       <app-user-info
         appHighlight
-        *ngFor="let user of (users.users$ | async) | favs:(favs.favs$ | async)"
+        *ngFor="let user of (users.users$ | async)"
         [user]="user"
-        (onFavClicked)="onFavClicked(user.id, $event)"
         (onDeleteClicked)="onDeleteClicked(user)"
         (onCardClicked)="onCardClicked(user)"
       ></app-user-info>

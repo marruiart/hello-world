@@ -9,6 +9,7 @@ import { UserRegister } from '../../models/auth/user-register.interface';
 import { UsersService } from '../users.service';
 import { lastValueFrom } from 'rxjs';
 import { NewUser } from '../../models/user.interface';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,7 @@ export class AuthStrapiService extends AuthProvider {
   constructor(
     private apiSvc: ApiService,
     private jwtSvc: JwtService,
+    private router: Router
   ) {
     super();
     this.init();
@@ -95,6 +97,7 @@ export class AuthStrapiService extends AuthProvider {
     lastValueFrom(this.jwtSvc.destroyToken())
       .then(_ => {
         this._isLogged.next(false);
+        this.router.navigate(['/login']);
       })
       .catch(err => {
         console.error(err);

@@ -21,8 +21,8 @@ export class HttpClientWebService extends HttpClientProvider {
     headers: any,
     urlEncoded: boolean
   ): HttpHeaders {
-
-    var _headers = new HttpHeaders(headers);
+    var _headers = new HttpHeaders();
+    //var _headers = _headers.set(headers);
     if (urlEncoded) {
       _headers.set('Accept', ' application/x-www-form-urlencoded');
     }

@@ -5,7 +5,6 @@ import { zip } from 'rxjs';
 import { ToDo } from 'src/app/core/models/task.interface';
 import { NewUser, User } from 'src/app/core/models/user.interface';
 import { AuthProvider } from 'src/app/core/services/auth/auth.provider';
-import { FavoritesService } from 'src/app/core/services/favorites.service';
 import { UsersService } from 'src/app/core/services/users.service';
 import { UserFormComponent } from 'src/app/shared-module/components/user-form/user-form.component';
 import { UserInfoFavClicked } from '../../shared-module/components/user-info/user-info-fav-clicked.interface';
@@ -23,15 +22,14 @@ export class HomePage implements OnInit {
     private router: Router,
     private toast: ToastController,
     public users: UsersService,
-    public favs: FavoritesService,
     public modal: ModalController,
     private authSrv: AuthProvider
   ) { }
 
   ngOnInit(): void {
     this.loading = true;
-    zip(this.users.getAllUsers(), this.favs.getAll()).subscribe({
-      next: res => {
+    this.users.getAllUsers().subscribe({
+      next: _ => {
         this.loading = false;
       },
       error: err => {
@@ -42,18 +40,6 @@ export class HomePage implements OnInit {
 
   navigateToTasks() {
     this.router.navigate([`/tasks`])
-  }
-
-  undoChanges(id: number, isAddFav: boolean) {
-    let obs = isAddFav ? this.favs.addFav(id) : this.favs.deleteFav(id);
-    obs.subscribe({
-      next: user => {
-        console.log(user);
-      },
-      error: err => {
-        console.log(err);
-      }
-    });
   }
 
   async presentForm(user: User | null, onDismiss: ((result: any) => void)) {
@@ -175,39 +161,10 @@ export class HomePage implements OnInit {
     this.presentForm(null, onDismiss);
   }
 
-
-  onFavClicked(id: number, event: UserInfoFavClicked) {
-    let obs = (event?.fav) ? this.favs.addFav(id) : this.favs.deleteFav(id);
-    obs.subscribe({
-      next: user => {
-        const options: ToastOptions = {
-          message: `Usuario ${user.id} ${event.fav ? "añadido a" : "eliminado de"} favoritos`,
-          duration: 1000,
-          position: 'bottom',
-          color: 'danger',
-          buttons: [{
-            text: 'deshacer',
-            handler: () => {
-              this.undoChanges(id, !event.fav);
-            }
-          }],
-          cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
-        };
-
-        //creamos el toast y lo presentamos (es una promesa por eso el then)
-        this.toast.create(options).then(toast => toast.present());
-      },
-      error: err => {
-        console.log(err);
-      }
-    });
-  }
-
   onDeleteClicked(user: User) {
     if (user.fav) {
-      zip(this.users.deleteUser(user.id), this.favs.deleteFav(user.id)).subscribe({
-        next: res => {
-          let user = res[0];
+      this.users.deleteUser(user.id).subscribe({
+        next: user => {
           const options: ToastOptions = {
             message: `Usuario eliminado`,
             duration: 1000,

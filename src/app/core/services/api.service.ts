@@ -20,9 +20,9 @@ export abstract class ApiService {
     if (contentType) {
       header['Content-Type'] = contentType;
     }
-    if (!url.includes('auth')) {
+    /* if (!url.includes('auth')) {
       header['Authorization'] = `Bearer ${this.jwtSvc.getToken()}`;
-    }
+    } */
     return header;
   }
 

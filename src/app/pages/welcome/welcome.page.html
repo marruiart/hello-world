@@ -9,7 +9,6 @@
   <app-user-info *ngIf="!loading"
     appHighlight
     [user]="user"
-    (onFavClicked)="onFavClicked(id, $event)"
     (onDeleteClicked)="onDeleteClicked(user)"
   ></app-user-info>
 </ion-content>

@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { UserInfoComponent } from './components/user-info/user-info.component';
 import { IonicModule } from '@ionic/angular';
 import { SurnameInitialPipe } from './pipes/surname-initial.pipe';
-import { FavInfoComponent } from './components/fav-info/fav-info.component';
 import { HighlightDirective } from './directives/highlight.directive';
-import { FavsPipe } from './pipes/favs.pipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UserFormComponent } from './components/user-form/user-form.component';
 import { TaskInfoComponent } from './components/task-info/task-info.component';
@@ -18,7 +16,6 @@ import { TasksSelectableItemComponent } from './components/tasks-selectable/task
   declarations: [
     //Components
     UserInfoComponent,
-    FavInfoComponent,
     UserFormComponent,
     TaskInfoComponent,
     AvatarSelectableComponent,
@@ -27,7 +24,6 @@ import { TasksSelectableItemComponent } from './components/tasks-selectable/task
     //Directives
     HighlightDirective,
     //Pipes
-    FavsPipe,
     SurnameInitialPipe,
   ],
   imports: [
@@ -44,12 +40,11 @@ import { TasksSelectableItemComponent } from './components/tasks-selectable/task
     //Components
     UserInfoComponent,
     UserFormComponent,
-    FavInfoComponent,
     TaskInfoComponent,
     //Directives
     HighlightDirective,
     //Pipes
-    FavsPipe
+
   ]
 })
 export class SharedModule { }
