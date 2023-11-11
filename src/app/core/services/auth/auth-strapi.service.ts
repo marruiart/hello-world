@@ -65,20 +65,22 @@ export class AuthStrapiService extends AuthProvider {
       this.apiSvc.post<Auth>("/api/auth/local/register", body)
         .subscribe({
           next: async auth => {
-            await lastValueFrom(this.jwtSvc.saveToken(auth.jwt)).catch(err => {
-              observer.error(err)
-            }
-
-            );
+            // Save token in local storage
+            await lastValueFrom(this.jwtSvc.saveToken(auth.jwt))
+              .catch(err => {
+                observer.error(err)
+              });
             const nickname = auth.user.username.slice(0, auth.user.username.indexOf("@"));
             const user: NewUser = {
               "user_id": auth.user.id,
               "nickname": nickname
             }
             this._isLogged.next(true);
-            await lastValueFrom(this.userSvc.addUser(user)).catch(err => {
-              observer.error(err)
-            });
+
+            await lastValueFrom(this.userSvc.addUser(user))
+              .catch(err => {
+                observer.error(err)
+              });
             observer.next();
             observer.complete();
           },
@@ -90,8 +92,13 @@ export class AuthStrapiService extends AuthProvider {
   }
 
   public logout(): void {
-    this.jwtSvc.destroyToken();
-    this._isLogged.next(false);
+    lastValueFrom(this.jwtSvc.destroyToken())
+      .then(_ => {
+        this._isLogged.next(false);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 
   public me<T>(): Observable<T> {
