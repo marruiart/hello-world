@@ -1,31 +1,41 @@
 import { Injectable } from '@angular/core';
-import { Dexie, PromiseExtended, Table } from 'dexie';
-
+import { Preferences } from '@capacitor/preferences';
+import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class StorageService extends Dexie {
-  loginAuth!: Table<any, any>;
+export class StorageService {
 
-  constructor() {
-    super('DexieDB');
-    this.version(1).stores({
-      loginAuth: 'id, token',
+  add(token: string): Observable<string> {
+    return new Observable<string>(observer => {
+      Preferences.set({
+        key: 'jwtToken',
+        value: JSON.stringify(token)
+      }).then((_) => {
+        observer.next(token);
+        observer.complete();
+      }).catch((error: any) => {
+        observer.error(error);
+      });
     });
   }
 
-   add(token: string): PromiseExtended<any> {
-    return this.loginAuth.put({ 'id': 0, 'token': token }, 'token')
-      .catch((err) =>
-        console.error(err)
-      )
-  }
-
-  async get(): Promise<any> {
-    return await this.loginAuth.get({ id: 0 })
-      .catch((err) =>
-        console.error(err)
-      );
+  get(): Observable<string> {
+    return new Observable<string>(observer => {
+      Preferences.get({ key: 'jwtToken' })
+        .then((token: any) => {
+          if (token['value']) {
+            if (token == '' || token == null) {
+              observer.error('No token');
+            } else {
+              observer.next(token);
+              observer.complete();
+            }
+          } else {
+            observer.error('No token');
+          }
+        }).catch((error: any) => observer.next(error));
+    });
   }
 
 }
