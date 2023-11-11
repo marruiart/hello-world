@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalController, ToastController, ToastOptions } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { zip } from 'rxjs';
 import { ToDo } from 'src/app/core/models/task.interface';
 import { NewUser, User } from 'src/app/core/models/user.interface';
@@ -25,8 +26,9 @@ export class HomePage implements OnInit {
     public users: UsersService,
     public favs: FavoritesService,
     public modal: ModalController,
-    private authSrv: AuthProvider
-  ) { }
+    private authSrv: AuthProvider,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.loading = true;

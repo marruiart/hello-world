@@ -5,6 +5,9 @@ import { HomePageRoutingModule } from './home-routing.module';
 import { MyUppercasePipe } from 'src/app/pages/home/pipes/my-uppercase.pipe';
 import { SharedModule } from 'src/app/shared-module/shared.module';
 import { IonicModule } from '@ionic/angular';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { HttpClient } from '@angular/common/http';
+import { translateLoaderFactory } from 'src/app/app.module';
 
 
 
@@ -12,7 +15,14 @@ import { IonicModule } from '@ionic/angular';
   imports: [
     HomePageRoutingModule,
     IonicModule,
-    SharedModule
+    SharedModule,
+    TranslateModule.forChild({
+      loader: {
+        provide: TranslateLoader,
+        deps: [HttpClient],
+        useFactory: (translateLoaderFactory)
+      }
+    })
   ],
   declarations: [
     HomePage,
