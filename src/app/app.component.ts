@@ -1,15 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/internal/Subscription';
 import { AuthProvider } from './core/services/auth/auth.provider';
-import { JwtService } from './core/services/auth/jwt.service';
-import { StorageService } from './core/services/storage.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
+  private _subs: Subscription[] = [];
 
   constructor(
     private router: Router,
@@ -18,8 +18,8 @@ export class AppComponent {
     this.init();
   }
 
-  private async init() {
-    this.authSvc.isLogged$.subscribe({
+  private init() {
+    this._subs.push(this.authSvc.isLogged$.subscribe({
       next: isLogged => {
         if (isLogged) {
           this.router.navigate(['/home']);
@@ -30,7 +30,11 @@ export class AppComponent {
       error: err => {
         console.error(err);
       }
-    });
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this._subs.forEach(s => s.unsubscribe());
   }
 
 }

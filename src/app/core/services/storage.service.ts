@@ -24,17 +24,13 @@ export class StorageService {
     return new Observable<string>(observer => {
       Preferences.get({ key: 'jwtToken' })
         .then((token: any) => {
-          if (token['value']) {
-            if (token == '' || token == null) {
-              observer.error('No token');
-            } else {
-              observer.next(token);
-              observer.complete();
-            }
-          } else {
-            observer.error('No token');
+          if (token != null && token['value']) {
+            observer.next(JSON.parse(token.value));
           }
-        }).catch((error: any) => observer.next(error));
+          observer.complete();
+        }).catch((error: any) => {
+          observer.next(error)
+        });
     });
   }
 

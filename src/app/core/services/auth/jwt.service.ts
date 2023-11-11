@@ -15,14 +15,24 @@ export class JwtService {
   ) { }
 
   public saveToken(jwt: string): Observable<string> {
-    return this.storageSvc.add(jwt).pipe(tap(_ => {
-      this._jwt = jwt;
+    return this.storageSvc.add(jwt).pipe(tap({
+      next: _ => {
+        this._jwt = jwt;
+      },
+      error: err => {
+        console.error(err)
+      }
     }));
   }
 
   public loadToken(): Observable<string> {
-    return this.storageSvc.get().pipe(tap(token => {
-      this._jwt = token;
+    return this.storageSvc.get().pipe(tap({
+      next: token => {
+        this._jwt = token;
+      },
+      error: err => {
+        console.error(err)
+      }
     }));
   }
 
