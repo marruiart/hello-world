@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/internal/operators/tap';
 import { StorageService } from '../storage.service';
 
 @Injectable({
@@ -14,33 +15,25 @@ export class JwtService {
   ) { }
 
   public saveToken(jwt: string): Observable<string> {
-    return new Observable<string>(observer => {
-      this.storageSvc.add(jwt)
-        .then(_ => {
-          this._jwt = jwt;
-          observer.next(jwt);
-          observer.complete();
-        })
-        .catch(error => {
-          observer.error(error);
-        });
-    })
+    return this.storageSvc.add(jwt).pipe(tap({
+      next: _ => {
+        this._jwt = jwt;
+      },
+      error: err => {
+        console.error(err)
+      }
+    }));
   }
 
-  public loadToken() {
-    return new Observable<string>(observer => {
-      this.storageSvc.get()
-        .then(res => {
-          if (res && res.token != '') {
-            this._jwt = res.token;
-            observer.next(this._jwt);
-            observer.complete();
-          }
-        }
-        ).catch(error => {
-          observer.error(error);
-        });
-    });
+  public loadToken(): Observable<string> {
+    return this.storageSvc.get().pipe(tap({
+      next: token => {
+        this._jwt = token;
+      },
+      error: err => {
+        console.error(err)
+      }
+    }));
   }
 
   public getToken() {
@@ -49,7 +42,7 @@ export class JwtService {
 
   public destroyToken() {
     this._jwt = "";
-    return this.storageSvc.loginAuth.delete(0);
+    return this.storageSvc.add(this._jwt);
   }
 
 }

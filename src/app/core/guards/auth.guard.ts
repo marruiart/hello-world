@@ -22,12 +22,11 @@ export class AuthGuard implements CanActivate {
   }
 
   private checkLogin(url: string): Observable<boolean> {
-    let obs = this.authSvc.isLogged$.pipe(tap(isLogged => {
+    return this.authSvc.isLogged$.pipe(tap(isLogged => {
       if (!isLogged) {
         this.router.navigate(['/login']);
       }
     }));
-    return obs;
   }
 
 }
