@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { Auth } from '../models/auth/auth.interface';
-import { UserLogin, User } from '../models/user.interface';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { NewUser, User } from '../models/user.interface';
 import { ApiService } from './api.service';
 
 export class LoginErrorException extends Error { }
@@ -66,16 +64,16 @@ export class UsersService extends ApiService {
   }
 
   public getAllUsers(): Observable<User[]> {
-    return this.get<User[]>(this.path, mapUsers, this.queries).pipe(tap(res => {
+    return this.getAll<User[]>(this.path, this.queries, mapUsers).pipe(tap(res => {
       this._users.next(res);
     }));
   }
 
   public getUser(id: number): Observable<User> {
-    return this.get<User>(this.path, mapUser, this.queries, id);
+    return this.get<User>(this.path, id, mapUser, this.queries);
   }
 
-  public addUser(user: User): Observable<User> {
+  public addUser(user: User | NewUser): Observable<User> {
     return this.add<User>(this.path, this.body(user), mapUser).pipe(tap(_ => {
       this.getAllUsers().subscribe();
     }));

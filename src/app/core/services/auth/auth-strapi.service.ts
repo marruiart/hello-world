@@ -5,8 +5,10 @@ import { UserCredentials } from '../../models/auth/user-credentials.interface';
 import { ApiService } from '../api.service';
 import { JwtService } from './jwt.service';
 import { AuthProvider } from './auth.provider';
-import { UserRegister } from '../../models/auth/user-register.interface copy';
+import { UserRegister } from '../../models/auth/user-register.interface';
 import { UsersService } from '../users.service';
+import { lastValueFrom } from 'rxjs';
+import { NewUser } from '../../models/user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -36,16 +38,17 @@ export class AuthStrapiService extends AuthProvider {
     return new Observable<void>(observer => {
       this.apiSvc.post<Auth>("/api/auth/local", body)
         .subscribe({
-          next: auth => {
-            this.jwtSvc.saveToken(auth.jwt);
+          next: async auth => {
+            await lastValueFrom(this.jwtSvc.saveToken(auth.jwt))
+              .catch(err => {
+                observer.error(err);
+              });
             this._isLogged.next(true);
             observer.next();
+            observer.complete();
           },
           error: err => {
             observer.error(err);
-          },
-          complete: () => {
-            observer.complete();
           }
         });
     });
@@ -59,36 +62,28 @@ export class AuthStrapiService extends AuthProvider {
     }
 
     return new Observable<void>(observer => {
-      let user: any;
-      // TODO, esto tiene que ser asíncrono para ejecutar primero el register
       this.apiSvc.post<Auth>("/api/auth/local/register", body)
         .subscribe({
-          next: auth => {
-            this.jwtSvc.saveToken(auth.jwt);
-            user = {
-              "user_id": auth.user.id
+          next: async auth => {
+            await lastValueFrom(this.jwtSvc.saveToken(auth.jwt)).catch(err => {
+              observer.error(err)
             }
-            observer.next();
-          },
-          error: err => {
-            observer.error(err);
-          },
-          complete: () => {
-            observer.complete();
-          }
-        });
 
-      this.apiSvc.post<any>("/api/extended-users", user)
-        .subscribe({
-          next: _ => {
+            );
+            const nickname = auth.user.username.slice(0, auth.user.username.indexOf("@"));
+            const user: NewUser = {
+              "user_id": auth.user.id,
+              "nickname": nickname
+            }
             this._isLogged.next(true);
+            await lastValueFrom(this.userSvc.addUser(user)).catch(err => {
+              observer.error(err)
+            });
             observer.next();
+            observer.complete();
           },
           error: err => {
             observer.error(err);
-          },
-          complete: () => {
-            observer.complete();
           }
         });
     });
@@ -98,6 +93,7 @@ export class AuthStrapiService extends AuthProvider {
     this.jwtSvc.destroyToken();
     this._isLogged.next(false);
   }
+
   public me<T>(): Observable<T> {
     throw new Error('Method not implemented.');
   }

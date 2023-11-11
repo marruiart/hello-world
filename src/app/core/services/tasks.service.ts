@@ -51,7 +51,7 @@ export class TasksService extends ApiService {
   }
 
   getTask(id: number): Observable<ToDo> {
-    return this.get<ToDo>(this.path, mapTask, this.queries, id);
+    return this.get<ToDo>(this.path, id, mapTask, this.queries);
   }
 
   addTask(task: ToDo): Observable<ToDo> {

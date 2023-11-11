@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ModalController, ToastController, ToastOptions } from '@ionic/angular';
 import { zip } from 'rxjs';
 import { ToDo } from 'src/app/core/models/task.interface';
-import { User } from 'src/app/core/models/user.interface';
+import { NewUser, User } from 'src/app/core/models/user.interface';
 import { AuthProvider } from 'src/app/core/services/auth/auth.provider';
 import { FavoritesService } from 'src/app/core/services/favorites.service';
 import { UsersService } from 'src/app/core/services/users.service';
@@ -128,23 +128,42 @@ export class HomePage implements OnInit {
 
   }
 
+  private mapNewUser = (data: User): NewUser => {
+    return {
+      user_id: data.user_id,
+      nickname: data.nickname,
+      avatar: data.avatar,
+      name: data.name,
+      surname: data.surname,
+      age: data.age,
+      fav: data.fav,
+      assignments: data.assignments
+    }
+  }
+
   onNewUser() {
     let onDismiss = (info: any) => {
       switch (info.role) {
         case 'submit': {
-          this.users.addUser(info.data).subscribe(async _ => {
-            const options: ToastOptions = {
-              message: `Usuario creado`,
-              duration: 1000,
-              position: 'bottom',
-              color: 'danger',
-              cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
-            };
+          const data = info.data.id == null ? this.mapNewUser(info.data) : info.data;
+          this.users.addUser(data).subscribe({
+            next: async _ => {
+              const options: ToastOptions = {
+                message: `Usuario creado`,
+                duration: 1000,
+                position: 'bottom',
+                color: 'danger',
+                cssClass: 'del-ion-toast' //Una clase que podemos poner en global.scss para configurar el ion-toast
+              };
 
-            //creamos el toast y lo presentamos (es una promesa por eso el then)
-            const toast = await this.toast.create(options);
-            toast.present();
-          })
+              //creamos el toast y lo presentamos (es una promesa por eso el then)
+              const toast = await this.toast.create(options);
+              toast.present();
+            },
+            error: err => {
+              console.error(err);
+            }
+          });
         }
           break;
         default: {

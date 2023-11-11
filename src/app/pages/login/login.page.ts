@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { UserCredentials } from 'src/app/core/models/auth/user-credentials.interface';
 import { AuthProvider } from 'src/app/core/services/auth/auth.provider';
 
@@ -9,7 +10,8 @@ import { AuthProvider } from 'src/app/core/services/auth/auth.provider';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnDestroy {
+  private _subs: Subscription[] = []
   public login: FormGroup;
   public errMsg: string = "";
 
@@ -27,15 +29,12 @@ export class LoginPage implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
-
   public onLogin() {
     const credentials: UserCredentials = {
       username: this.login.value.identifier,
       password: this.login.value.password
     }
-    this.authSvc.login(credentials).subscribe({
+    let sub = this.authSvc.login(credentials).subscribe({
       next: _ => {
         this.router.navigate(['/home']);
       },
@@ -43,10 +42,15 @@ export class LoginPage implements OnInit {
         console.error(err);
       }
     });
+    this._subs.push(sub);
   }
 
   public onCreateAccount() {
     this.router.navigate(['/register']);
+  }
+
+  ngOnDestroy(): void {
+    this._subs.forEach(s => s.unsubscribe());
   }
 
 }

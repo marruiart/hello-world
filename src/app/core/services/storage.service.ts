@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Dexie, Table } from 'dexie';
+import { Dexie, PromiseExtended, Table } from 'dexie';
 
 @Injectable({
   providedIn: 'root'
@@ -14,13 +14,14 @@ export class StorageService extends Dexie {
     });
   }
 
-  async add(token: string) {
-    await this.loginAuth.add({ 'id': 0, 'token': token }, 'token').catch((err) =>
-      console.error(err)
-    )
+   add(token: string): PromiseExtended<any> {
+    return this.loginAuth.put({ 'id': 0, 'token': token }, 'token')
+      .catch((err) =>
+        console.error(err)
+      )
   }
 
-  async get() {
+  async get(): Promise<any> {
     return await this.loginAuth.get({ id: 0 })
       .catch((err) =>
         console.error(err)

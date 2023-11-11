@@ -49,9 +49,9 @@ export abstract class ApiService {
 
   protected get<T>(
     path: string,
+    id: number,
     callback: ((res: T) => T),
     queries: { [query: string]: string } = {},
-    id: number | null = null
   ): Observable<T> {
 
     const url = this.getUrl(path, id);
@@ -71,7 +71,7 @@ export abstract class ApiService {
   ): Observable<T> {
 
     const url = this.getUrl(path);
-    return this.http.post<T>(url, body, {}, this.getHeader(url))
+    return this.http.post<T>(url, body, this.getHeader(url))
       .pipe(map(callback), catchError(error => {
         console.log("ERROR add");
         console.error(error);
